@@ -64,9 +64,11 @@ int theGame()
 				window.close();
 
 			if (event.type == Event::KeyPressed)
+			{
 				if (event.key.code == Keyboard::Up) isRotated = true;
-				else if (event.key.code == Keyboard::Left) dx = -1;
-				else if (event.key.code == Keyboard::Right) dx = 1;
+				if (event.key.code == Keyboard::Left) dx = -1;
+				if (event.key.code == Keyboard::Right) dx = 1;
+			}
 		}
 
 		if (Keyboard::isKeyPressed(Keyboard::Down)) delay = 0.05;
