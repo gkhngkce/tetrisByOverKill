@@ -4,7 +4,7 @@
 using namespace sf;
 using namespace std;
 
-const int M = 20;
+const int M = 24;
 const int N = 10;
 
 int field[M][N] = { 0 };
