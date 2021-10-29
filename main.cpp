@@ -45,7 +45,7 @@ int theGame()
 
 	Sprite s(tiles), background(bground), frame(outFrame);
 
-	int dx = 0; bool rotate = 0; int colorNum = 1;
+	int dx = 0; bool isRotated = 0; int colorNum = 1;
 	float timer = 0, delay = 0.3;
 
 	Clock clock;
@@ -63,7 +63,7 @@ int theGame()
 				window.close();
 
 			if (event.type == Event::KeyPressed)
-				if (event.key.code == Keyboard::Up) rotate = true;
+				if (event.key.code == Keyboard::Up) isRotated = true;
 				else if (event.key.code == Keyboard::Left) dx = -1;
 				else if (event.key.code == Keyboard::Right) dx = 1;
 		}
@@ -74,8 +74,8 @@ int theGame()
 		for (int i = 0; i<4; i++) { b[i] = a[i]; a[i].x += dx; }
 		if (!collisionDetection()) for (int i = 0; i<4; i++) a[i] = b[i];
 
-		//////Rotate//////
-		if (rotate)
+		//////isRotated//////
+		if (isRotated)
 		{
 			Point p = a[1]; //center of rotation
 			for (int i = 0; i<4; i++)
@@ -122,7 +122,7 @@ int theGame()
 			if (count<fieldColumn) k--;
 		}
 
-		dx = 0; rotate = 0; delay = 0.3;
+		dx = 0; isRotated = 0; delay = 0.3;
 
 		/////////draw//////////
 		window.clear(Color::White);
