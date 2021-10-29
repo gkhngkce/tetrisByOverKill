@@ -7,7 +7,7 @@ using namespace std;
 const int fieldRow = 24;
 const int fieldColumn = 10;
 
-int field[fieldRow][fieldColumn] = { 0 };
+int gameField[fieldRow][fieldColumn] = { 0 };
 
 struct Point
 {
@@ -29,7 +29,7 @@ bool check()
 {
 	for (int i = 0; i<4; i++)
 		if (a[i].x<0 || a[i].x >= fieldColumn || a[i].y >= fieldRow) return 0;
-		else if (field[a[i].y][a[i].x]) return 0;
+		else if (gameField[a[i].y][a[i].x]) return 0;
 
 		return 1;
 };
@@ -95,7 +95,7 @@ int theGame()
 
 			if (!check())
 			{
-				for (int i = 0; i<4; i++) field[b[i].y][b[i].x] = colorNum;
+				for (int i = 0; i<4; i++) gameField[b[i].y][b[i].x] = colorNum;
 
 				colorNum = 1 + rand() % 7;
 				int n = rand() % 7;
@@ -116,8 +116,8 @@ int theGame()
 			int count = 0;
 			for (int j = 0; j<fieldColumn; j++)
 			{
-				if (field[i][j]) count++;
-				field[k][j] = field[i][j];
+				if (gameField[i][j]) count++;
+				gameField[k][j] = gameField[i][j];
 			}
 			if (count<fieldColumn) k--;
 		}
@@ -131,8 +131,8 @@ int theGame()
 		for (int i = 0; i<fieldRow; i++)
 			for (int j = 0; j<fieldColumn; j++)
 			{
-				if (field[i][j] == 0) continue;
-				s.setTextureRect(IntRect(field[i][j] * 18, 0, 18, 18));
+				if (gameField[i][j] == 0) continue;
+				s.setTextureRect(IntRect(gameField[i][j] * 18, 0, 18, 18));
 				s.setPosition(j * 18, i * 18);
 				s.move(28, 31); //offset
 				window.draw(s);
