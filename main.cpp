@@ -5,9 +5,9 @@ using namespace sf;
 using namespace std;
 
 const int fieldRow = 24;
-const int N = 10;
+const int fieldColumn = 10;
 
-int field[fieldRow][N] = { 0 };
+int field[fieldRow][fieldColumn] = { 0 };
 
 struct Point
 {
@@ -28,7 +28,7 @@ int figures[7][4] =
 bool check()
 {
 	for (int i = 0; i<4; i++)
-		if (a[i].x<0 || a[i].x >= N || a[i].y >= fieldRow) return 0;
+		if (a[i].x<0 || a[i].x >= fieldColumn || a[i].y >= fieldRow) return 0;
 		else if (field[a[i].y][a[i].x]) return 0;
 
 		return 1;
@@ -114,12 +114,12 @@ int theGame()
 		for (int i = fieldRow - 1; i>0; i--)
 		{
 			int count = 0;
-			for (int j = 0; j<N; j++)
+			for (int j = 0; j<fieldColumn; j++)
 			{
 				if (field[i][j]) count++;
 				field[k][j] = field[i][j];
 			}
-			if (count<N) k--;
+			if (count<fieldColumn) k--;
 		}
 
 		dx = 0; rotate = 0; delay = 0.3;
@@ -129,7 +129,7 @@ int theGame()
 		window.draw(background);
 
 		for (int i = 0; i<fieldRow; i++)
-			for (int j = 0; j<N; j++)
+			for (int j = 0; j<fieldColumn; j++)
 			{
 				if (field[i][j] == 0) continue;
 				s.setTextureRect(IntRect(field[i][j] * 18, 0, 18, 18));
