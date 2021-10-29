@@ -4,10 +4,10 @@
 using namespace sf;
 using namespace std;
 
-const int M = 24;
+const int fieldRow = 24;
 const int N = 10;
 
-int field[M][N] = { 0 };
+int field[fieldRow][N] = { 0 };
 
 struct Point
 {
@@ -28,7 +28,7 @@ int figures[7][4] =
 bool check()
 {
 	for (int i = 0; i<4; i++)
-		if (a[i].x<0 || a[i].x >= N || a[i].y >= M) return 0;
+		if (a[i].x<0 || a[i].x >= N || a[i].y >= fieldRow) return 0;
 		else if (field[a[i].y][a[i].x]) return 0;
 
 		return 1;
@@ -110,8 +110,8 @@ int theGame()
 		}
 
 		///////check lines//////////
-		int k = M - 1;
-		for (int i = M - 1; i>0; i--)
+		int k = fieldRow - 1;
+		for (int i = fieldRow - 1; i>0; i--)
 		{
 			int count = 0;
 			for (int j = 0; j<N; j++)
@@ -128,7 +128,7 @@ int theGame()
 		window.clear(Color::White);
 		window.draw(background);
 
-		for (int i = 0; i<M; i++)
+		for (int i = 0; i<fieldRow; i++)
 			for (int j = 0; j<N; j++)
 			{
 				if (field[i][j] == 0) continue;
