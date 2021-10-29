@@ -78,13 +78,13 @@ int theGame()
 		//////isRotated//////
 		if (isRotated)
 		{
-			Point p = a[1]; //center of rotation
+			Point centerOfRotation = a[1]; //center of rotation
 			for (int i = 0; i<4; i++)
 			{
-				int x = a[i].y - p.y;
-				int y = a[i].x - p.x;
-				a[i].x = p.x - x;
-				a[i].y = p.y + y;
+				int x = a[i].y - centerOfRotation.y;
+				int y = a[i].x - centerOfRotation.x;
+				a[i].x = centerOfRotation.x - x;
+				a[i].y = centerOfRotation.y + y;
 			}
 			if (!collisionDetection()) for (int i = 0; i<4; i++) a[i] = b[i];
 		}
