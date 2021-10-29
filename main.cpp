@@ -25,7 +25,7 @@ int tetrominos[7][4] =
 	2,3,4,5, // O
 };
 
-bool check()
+bool collisionDetection()
 {
 	for (int i = 0; i<4; i++)
 		if (a[i].x<0 || a[i].x >= fieldColumn || a[i].y >= fieldRow) return 0;
@@ -72,7 +72,7 @@ int theGame()
 
 		//// <- Move -> ///
 		for (int i = 0; i<4; i++) { b[i] = a[i]; a[i].x += dx; }
-		if (!check()) for (int i = 0; i<4; i++) a[i] = b[i];
+		if (!collisionDetection()) for (int i = 0; i<4; i++) a[i] = b[i];
 
 		//////Rotate//////
 		if (rotate)
@@ -85,7 +85,7 @@ int theGame()
 				a[i].x = p.x - x;
 				a[i].y = p.y + y;
 			}
-			if (!check()) for (int i = 0; i<4; i++) a[i] = b[i];
+			if (!collisionDetection()) for (int i = 0; i<4; i++) a[i] = b[i];
 		}
 
 		///////Tick//////
@@ -93,7 +93,7 @@ int theGame()
 		{
 			for (int i = 0; i<4; i++) { b[i] = a[i]; a[i].y += 1; }
 
-			if (!check())
+			if (!collisionDetection())
 			{
 				for (int i = 0; i<4; i++) gameField[b[i].y][b[i].x] = colorNum;
 
@@ -109,7 +109,7 @@ int theGame()
 			timer = 0;
 		}
 
-		///////check lines//////////
+		///////collisionDetection lines//////////
 		int k = fieldRow - 1;
 		for (int i = fieldRow - 1; i>0; i--)
 		{
