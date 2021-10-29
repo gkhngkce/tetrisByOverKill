@@ -4,7 +4,7 @@
 using namespace sf;
 using namespace std;
 
-const int fieldRow = 24;
+const int fieldRow = 20;
 const int fieldColumn = 10;
 
 int gameField[fieldRow][fieldColumn] = { 0 };
