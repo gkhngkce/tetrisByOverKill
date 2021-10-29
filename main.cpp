@@ -56,16 +56,16 @@ int theGame()
 		clock.restart();
 		timer += time;
 
-		Event e;
-		while (window.pollEvent(e))
+		Event event;
+		while (window.pollEvent(event))
 		{
-			if (e.type == Event::Closed)
+			if (event.type == Event::Closed)
 				window.close();
 
-			if (e.type == Event::KeyPressed)
-				if (e.key.code == Keyboard::Up) rotate = true;
-				else if (e.key.code == Keyboard::Left) dx = -1;
-				else if (e.key.code == Keyboard::Right) dx = 1;
+			if (event.type == Event::KeyPressed)
+				if (event.key.code == Keyboard::Up) rotate = true;
+				else if (event.key.code == Keyboard::Left) dx = -1;
+				else if (event.key.code == Keyboard::Right) dx = 1;
 		}
 
 		if (Keyboard::isKeyPressed(Keyboard::Down)) delay = 0.05;
