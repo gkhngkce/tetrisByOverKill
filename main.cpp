@@ -44,7 +44,7 @@ int theGame()
 	bground.loadFromFile("sources/background.png");
 	outFrame.loadFromFile("sources/frame.png");
 
-	Sprite s(tiles), background(bground), frame(outFrame);
+	Sprite sprite(tiles), background(bground), frame(outFrame);
 
 	int dx = 0; bool isRotated = 0; int colorNum = 1;
 	float timer = 0, delay = 0.3;
@@ -134,18 +134,18 @@ int theGame()
 			for (int j = 0; j<fieldColumn; j++)
 			{
 				if (gameField[i][j] == 0) continue;
-				s.setTextureRect(IntRect(gameField[i][j] * 18, 0, 18, 18));
-				s.setPosition(j * 18, i * 18);
-				s.move(28, 31); //offset
-				window.draw(s);
+				sprite.setTextureRect(IntRect(gameField[i][j] * 18, 0, 18, 18));
+				sprite.setPosition(j * 18, i * 18);
+				sprite.move(28, 31); //offset
+				window.draw(sprite);
 			}
 
 		for (int i = 0; i<4; i++)
 		{
-			s.setTextureRect(IntRect(colorNum * 18, 0, 18, 18));
-			s.setPosition(a[i].x * 18, a[i].y * 18);
-			s.move(28, 31); //offset
-			window.draw(s);
+			sprite.setTextureRect(IntRect(colorNum * 18, 0, 18, 18));
+			sprite.setPosition(a[i].x * 18, a[i].y * 18);
+			sprite.move(28, 31); //offset
+			window.draw(sprite);
 		}
 
 		window.draw(frame);
