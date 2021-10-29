@@ -25,6 +25,7 @@ int tetrominos[7][4] =
 	2,3,4,5, // O
 };
 
+
 bool collisionDetection()
 {
 	for (int i = 0; i<4; i++)
@@ -97,8 +98,9 @@ int theGame()
 			{
 				for (int i = 0; i<4; i++) gameField[b[i].y][b[i].x] = colorNum;
 
-				colorNum = 1 + rand() % 7;
+				
 				int n = rand() % 7;
+				colorNum = n+1;
 				for (int i = 0; i<4; i++)
 				{
 					a[i].x = tetrominos[n][i] % 2;
