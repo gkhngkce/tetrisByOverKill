@@ -14,7 +14,7 @@ struct Point
 	int x, y;
 } a[4], b[4];
 
-int figures[7][4] =
+int tetrominos[7][4] =
 {
 	1,3,5,7, // I
 	2,4,5,7, // Z
@@ -101,8 +101,8 @@ int theGame()
 				int n = rand() % 7;
 				for (int i = 0; i<4; i++)
 				{
-					a[i].x = figures[n][i] % 2;
-					a[i].y = figures[n][i] / 2;
+					a[i].x = tetrominos[n][i] % 2;
+					a[i].y = tetrominos[n][i] / 2;
 				}
 			}
 
