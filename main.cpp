@@ -38,12 +38,12 @@ int theGame()
 {
 	srand(time(0));
 	RenderWindow window(VideoMode(320, 480), "The Game!");
-	Texture t1, t2, t3;
-	t1.loadFromFile("sources/tiles.png");
-	t2.loadFromFile("sources/background.png");
-	t3.loadFromFile("sources/frame.png");
+	Texture tiles, bground, outFrame;
+	tiles.loadFromFile("sources/tiles.png");
+	bground.loadFromFile("sources/background.png");
+	outFrame.loadFromFile("sources/frame.png");
 
-	Sprite s(t1), background(t2), frame(t3);
+	Sprite s(tiles), background(bground), frame(outFrame);
 
 	int dx = 0; bool rotate = 0; int colorNum = 1;
 	float timer = 0, delay = 0.3;
