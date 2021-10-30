@@ -28,8 +28,8 @@ int tetrominos[7][4] =
 
 bool collisionDetection()
 {
-	for (int i = 0; i<4; i++)
-		if (a[i].x<0 || a[i].x >= fieldColumn || a[i].y >= fieldRow) return 0;
+	for (int i = 0; i < 4; i++)
+		if (a[i].x < 0 || a[i].x >= fieldColumn || a[i].y >= fieldRow) return 0;
 		else if (gameField[a[i].y][a[i].x]) return 0;
 
 		return 1;
@@ -74,36 +74,36 @@ int theGame()
 		if (Keyboard::isKeyPressed(Keyboard::Down)) delay = 0.05;
 
 		//// <- Move -> ///
-		for (int i = 0; i<4; i++) { b[i] = a[i]; a[i].x += dx; }
-		if (!collisionDetection()) for (int i = 0; i<4; i++) a[i] = b[i];
+		for (int i = 0; i < 4; i++) { b[i] = a[i]; a[i].x += dx; }
+		if (!collisionDetection()) for (int i = 0; i < 4; i++) a[i] = b[i];
 
 		//////isRotated//////
 		if (isRotated)
 		{
 			Point centerOfRotation = a[1]; //center of rotation
-			for (int i = 0; i<4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				int x = a[i].y - centerOfRotation.y;
 				int y = a[i].x - centerOfRotation.x;
 				a[i].x = centerOfRotation.x - x;
 				a[i].y = centerOfRotation.y + y;
 			}
-			if (!collisionDetection()) for (int i = 0; i<4; i++) a[i] = b[i];
+			if (!collisionDetection()) for (int i = 0; i < 4; i++) a[i] = b[i];
 		}
 
 		///////Tick//////
-		if (timer>delay)
+		if (timer > delay)
 		{
-			for (int i = 0; i<4; i++) { b[i] = a[i]; a[i].y += 1; }
+			for (int i = 0; i < 4; i++) { b[i] = a[i]; a[i].y += 1; }
 
 			if (!collisionDetection())
 			{
-				for (int i = 0; i<4; i++) gameField[b[i].y][b[i].x] = colorNum;
+				for (int i = 0; i < 4; i++) gameField[b[i].y][b[i].x] = colorNum;
 
-				
+				// Feature: assign a fixed color to each shape
 				int n = rand() % 7;
-				colorNum = n+1;
-				for (int i = 0; i<4; i++)
+				colorNum = n + 1;
+				for (int i = 0; i < 4; i++)
 				{
 					a[i].x = tetrominos[n][i] % 2;
 					a[i].y = tetrominos[n][i] / 2;
@@ -115,15 +115,15 @@ int theGame()
 
 		///////collisionDetection lines//////////
 		int k = fieldRow - 1;
-		for (int i = fieldRow - 1; i>0; i--)
+		for (int i = filedRow - 1; i > 0; i--)
 		{
 			int count = 0;
-			for (int j = 0; j<fieldColumn; j++)
+			for (int j = 0; j < fieldColumn; j++)
 			{
 				if (gameField[i][j]) count++;
 				gameField[k][j] = gameField[i][j];
 			}
-			if (count<fieldColumn) k--;
+			if (count < fieldColumn) k--;
 		}
 
 		dx = 0; isRotated = 0; delay = 0.3;
@@ -132,8 +132,8 @@ int theGame()
 		window.clear(Color::White);
 		window.draw(background);
 
-		for (int i = 0; i<fieldRow; i++)
-			for (int j = 0; j<fieldColumn; j++)
+		for (int i = 0; i < fieldRow; i++)
+			for (int j = 0; j < fieldColumn; j++)
 			{
 				if (gameField[i][j] == 0) continue;
 				sprite.setTextureRect(IntRect(gameField[i][j] * 18, 0, 18, 18));
@@ -142,7 +142,7 @@ int theGame()
 				window.draw(sprite);
 			}
 
-		for (int i = 0; i<4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			sprite.setTextureRect(IntRect(colorNum * 18, 0, 18, 18));
 			sprite.setPosition(a[i].x * 18, a[i].y * 18);
