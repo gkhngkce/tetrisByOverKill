@@ -32,13 +32,57 @@ bool collisionDetection()
 		if (a[i].x < 0 || a[i].x >= fieldColumn || a[i].y >= fieldRow) return 0;
 		else if (gameField[a[i].y][a[i].x]) return 0;
 
-		return 1;
+	return 1;
 };
+
+//////Rotat//////
+int rotate()
+{
+	Point centerOfRotation = a[1]; //center of rotation
+	for (int i = 0; i < 4; i++)
+	{
+		int x = a[i].y - centerOfRotation.y;
+		int y = a[i].x - centerOfRotation.x;
+		a[i].x = centerOfRotation.x - x;
+		a[i].y = centerOfRotation.y + y;
+	}
+	if (!collisionDetection()) for (int i = 0; i < 4; i++) a[i] = b[i];
+
+	return 0;
+};
+
+int menuScreen()
+{
+	RenderWindow menuWindow(VideoMode(320, 480), "The Menu!");
+
+	while (menuWindow.isOpen())
+	{
+		Event event;
+		while (menuWindow.pollEvent(event))
+		{
+			if (event.type == Event::Closed)
+				menuWindow.close();
+
+			if (event.type == Event::KeyPressed)
+			{
+				if (event.key.code == Keyboard::Up) ;
+				if (event.key.code == Keyboard::Down) ;
+				if (event.key.code == Keyboard::Enter) theGame();
+			}
+		}
+
+		menuWindow.clear(Color::White);
+		// End the current frame and display its contents on screen
+		menuWindow.display();
+	}
+
+	return 0;
+}
 
 int theGame()
 {
 	srand(time(0));
-	RenderWindow window(VideoMode(320, 480), "The Game!");
+	RenderWindow gameWindow(VideoMode(320, 480), "The Game!");
 	Texture tiles, bground, outFrame;
 	tiles.loadFromFile("sources/tiles.png");
 	bground.loadFromFile("sources/background.png");
@@ -46,26 +90,26 @@ int theGame()
 
 	Sprite sprite(tiles), background(bground), frame(outFrame);
 
-	int dx = 0; bool isRotated = 0; int colorNum = 1;
+	int dx = 0, colorNum = 1;
 	float timer = 0, delay = 0.3;
 
 	Clock clock;
 
-	while (window.isOpen())
+	while (gameWindow.isOpen())
 	{
 		float time = clock.getElapsedTime().asSeconds();
 		clock.restart();
 		timer += time;
 
 		Event event;
-		while (window.pollEvent(event))
+		while (gameWindow.pollEvent(event))
 		{
 			if (event.type == Event::Closed)
-				window.close();
+				gameWindow.close();
 
 			if (event.type == Event::KeyPressed)
 			{
-				if (event.key.code == Keyboard::Up) isRotated = true;
+				if (event.key.code == Keyboard::Up) rotate();
 				if (event.key.code == Keyboard::Left) dx = -1;
 				if (event.key.code == Keyboard::Right) dx = 1;
 			}
@@ -76,20 +120,6 @@ int theGame()
 		//// <- Move -> ///
 		for (int i = 0; i < 4; i++) { b[i] = a[i]; a[i].x += dx; }
 		if (!collisionDetection()) for (int i = 0; i < 4; i++) a[i] = b[i];
-
-		//////isRotated//////
-		if (isRotated)
-		{
-			Point centerOfRotation = a[1]; //center of rotation
-			for (int i = 0; i < 4; i++)
-			{
-				int x = a[i].y - centerOfRotation.y;
-				int y = a[i].x - centerOfRotation.x;
-				a[i].x = centerOfRotation.x - x;
-				a[i].y = centerOfRotation.y + y;
-			}
-			if (!collisionDetection()) for (int i = 0; i < 4; i++) a[i] = b[i];
-		}
 
 		///////Tick//////
 		if (timer > delay)
@@ -129,8 +159,8 @@ int theGame()
 		dx = 0; isRotated = 0; delay = 0.3;
 
 		/////////draw//////////
-		window.clear(Color::White);
-		window.draw(background);
+		gameWindow.clear(Color::White);
+		gameWindow.draw(background);
 
 		for (int i = 0; i < fieldRow; i++)
 			for (int j = 0; j < fieldColumn; j++)
@@ -139,7 +169,7 @@ int theGame()
 				sprite.setTextureRect(IntRect(gameField[i][j] * 18, 0, 18, 18));
 				sprite.setPosition(j * 18, i * 18);
 				sprite.move(28, 31); //offset
-				window.draw(sprite);
+				gameWindow.draw(sprite);
 			}
 
 		for (int i = 0; i < 4; i++)
@@ -147,11 +177,11 @@ int theGame()
 			sprite.setTextureRect(IntRect(colorNum * 18, 0, 18, 18));
 			sprite.setPosition(a[i].x * 18, a[i].y * 18);
 			sprite.move(28, 31); //offset
-			window.draw(sprite);
+			gameWindow.draw(sprite);
 		}
 
-		window.draw(frame);
-		window.display();
+		gameWindow.draw(frame);
+		gameWindow.display();
 	}
 	return 0;
 }
@@ -159,19 +189,6 @@ int theGame()
 
 int main()
 {
-	int choice;
-	cout << "\n\n\t\t\t\tWelcome to the Tetris by the team OverKill\n\n\n\n\n\n";
-	cout << "\t\t\t\t\t1- Start Game\n\n";
-	cout << "\t\t\t\t\t2- Exit\n\n";
-	cout << "\t\t\t\t\t3- High Scores(Feature)\n\n";
-
-	cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour choice? :";
-	cin >> choice;
-
-	if (choice == 1)
-	{
-		theGame();
-	}
-
+	menuScreen();
 	return 0;
 }
