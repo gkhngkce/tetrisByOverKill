@@ -115,7 +115,7 @@ int theGame()
 
 		///////collisionDetection lines//////////
 		int k = fieldRow - 1;
-		for (int i = filedRow - 1; i > 0; i--)
+		for (int i = fieldRow - 1; i > 0; i--)
 		{
 			int count = 0;
 			for (int j = 0; j < fieldColumn; j++)
