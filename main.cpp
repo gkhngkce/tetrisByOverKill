@@ -46,7 +46,23 @@ bool collisionDetection()
 	return 1;
 };
 
-int theGame()
+int rotate()
+{
+	Point centerOfRotation = a[1]; //center of rotation
+	for (int i = 0; i < 4; i++)
+	{
+		int x = a[i].y - centerOfRotation.y;
+		int y = a[i].x - centerOfRotation.x;
+		a[i].x = centerOfRotation.x - x;
+		a[i].y = centerOfRotation.y + y;
+	}
+	if (!collisionDetection()) for (int i = 0; i < 4; i++) a[i] = b[i];
+
+	return 0;
+};
+
+
+int gameWindow()
 {
 	srand(time(0));
 	RenderWindow window(VideoMode(320, 480), "The Game!");
@@ -77,7 +93,7 @@ int theGame()
 			{
 				if (event.key.code == Keyboard::Up)
 				{
-					isRotated = true;
+					rotate();
 				}
 				if (event.key.code == Keyboard::Left)
 				{
@@ -106,26 +122,6 @@ int theGame()
 			for (int i = 0; i < 4; i++) 
 			{ 
 				a[i] = b[i]; 
-			}
-		}
-
-		//Check whether current tetromino is rotated or not ?
-		if (isRotated)
-		{
-			Point centerOfRotation = a[1]; //center of rotation
-			for (int i = 0; i < 4; i++)
-			{
-				int x = a[i].y - centerOfRotation.y;
-				int y = a[i].x - centerOfRotation.x;
-				a[i].x = centerOfRotation.x - x;
-				a[i].y = centerOfRotation.y + y;
-			}
-			if (!collisionDetection())
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					a[i] = b[i];
-				}
 			}
 		}
 
@@ -221,7 +217,7 @@ int main()
 
 	if (choice == 1)
 	{
-		theGame();
+		gameWindow();
 	}
 
 	return 0;
