@@ -144,8 +144,8 @@ int gameWindow()
 				colorNum = n + 1;
 				for (int i = 0; i < 4; i++)
 				{
-					a[i].x = tetrominos[n][i] % 2; //getting x coordinate of tetromino
-					a[i].y = tetrominos[n][i] / 2; //getting y coordinate of tetromino
+					a[i].x = (tetrominos[n][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
+					a[i].y = tetrominos[n][i] / 2; //defining y coordinate of tetromino
 				}
 			}
 			timer = 0;
