@@ -46,18 +46,26 @@ bool collisionDetection()
 	return 1;
 };
 
-int rotate()
+int rotate(int currTetromino)
 {
-	Point centerOfRotation = a[1]; //center of rotation
-	for (int i = 0; i < 4; i++)
+	if (currTetromino != 7)
 	{
-		int x = a[i].y - centerOfRotation.y;
-		int y = a[i].x - centerOfRotation.x;
-		a[i].x = centerOfRotation.x - x;
-		a[i].y = centerOfRotation.y + y;
+		Point centerOfRotation = a[1]; //center of rotation
+		for (int i = 0; i < 4; i++)
+		{
+			int x = a[i].y - centerOfRotation.y;
+			int y = a[i].x - centerOfRotation.x;
+			a[i].x = centerOfRotation.x - x;
+			a[i].y = centerOfRotation.y + y;
+		}
+		if (!collisionDetection())
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				a[i] = b[i];
+			}
+		}
 	}
-	if (!collisionDetection()) for (int i = 0; i < 4; i++) a[i] = b[i];
-
 	return 0;
 };
 
@@ -85,7 +93,9 @@ int gameWindow()
 	Sprite sprite(tiles), background(bground), frame(outFrame);
 	Clock clock;
 
-	int dx = 0; bool isRotated = 0; int colorNum = newTetromino();
+	int dx = 0; 
+	bool isRotated = 0; 
+	int colorNum = newTetromino();
 	float timer = 0, delay = 0.3;
 
 	while (window.isOpen())
@@ -105,7 +115,8 @@ int gameWindow()
 			{
 				if (event.key.code == Keyboard::Up)
 				{
-					rotate();
+					cout << "Current Tetromino: " << colorNum;
+					rotate(colorNum);
 				}
 				if (event.key.code == Keyboard::Left)
 				{
@@ -176,7 +187,9 @@ int gameWindow()
 			}
 		}
 
-		dx = 0; isRotated = 0; delay = 0.3;
+		dx = 0; 
+		isRotated = 0; 
+		delay = 0.3;
 
 		//Drawing to the screen
 		window.clear(Color::White);
