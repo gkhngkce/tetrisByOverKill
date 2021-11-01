@@ -29,7 +29,7 @@ int tetrominos[7][4] =
 	2,3,4,5, // O
 };
 
- //Collusion detection function
+//Collusion detection function
 bool collisionDetection()
 {
 	for (int i = 0; i < 4; i++)
@@ -61,6 +61,18 @@ int rotate()
 	return 0;
 };
 
+int newTetromino()
+{
+	int n = rand() % 7;
+	int colorNum = n + 1;
+	for (int i = 0; i < 4; i++)
+	{
+		a[i].x = (tetrominos[n][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
+		a[i].y = tetrominos[n][i] / 2; //defining y coordinate of tetromino
+	}
+	return colorNum;
+}
+
 
 int gameWindow()
 {
@@ -73,7 +85,7 @@ int gameWindow()
 	Sprite sprite(tiles), background(bground), frame(outFrame);
 	Clock clock;
 
-	int dx = 0; bool isRotated = 0; int colorNum = 1;
+	int dx = 0; bool isRotated = 0; int colorNum = newTetromino();
 	float timer = 0, delay = 0.3;
 
 	while (window.isOpen())
@@ -140,13 +152,7 @@ int gameWindow()
 					gameField[b[i].y][b[i].x] = colorNum;
 				}
 				//random tetromino generation and coloring
-				int n = rand() % 7;
-				colorNum = n + 1;
-				for (int i = 0; i < 4; i++)
-				{
-					a[i].x = (tetrominos[n][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
-					a[i].y = tetrominos[n][i] / 2; //defining y coordinate of tetromino
-				}
+				colorNum = newTetromino();
 			}
 			timer = 0;
 		}
