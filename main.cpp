@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <time.h>
 #include <iostream>
+#include <list>
+
 using namespace sf;
 using namespace std;
 
@@ -10,6 +12,7 @@ const int fieldColumn = 10;
 
 //Defining the game field
 int gameField[fieldRow][fieldColumn] = { 0 };
+list <int> tetrominoBatch;
 
 // ??? point of tetrominos ???
 struct Point
@@ -69,14 +72,32 @@ int rotate(int currTetromino)
 	return 0;
 };
 
+void createTetrominoBatch()
+{
+	tetrominoBatch.clear();
+	do
+	{
+		int randomPiece = rand() % 7;
+		if (std::find(tetrominoBatch.begin(), tetrominoBatch.end(), randomPiece) == tetrominoBatch.end())
+		{
+			tetrominoBatch.push_back(randomPiece);
+		}
+	} while (tetrominoBatch.size() <= 6);
+}
+
 int newTetromino()
 {
-	int n = rand() % 7;
-	int colorNum = n + 1;
+	if (tetrominoBatch.empty())
+	{
+		createTetrominoBatch();
+	}
+	int currentTetromino = tetrominoBatch.back();
+	tetrominoBatch.pop_back();
+	int colorNum = currentTetromino + 1;
 	for (int i = 0; i < 4; i++)
 	{
-		a[i].x = (tetrominos[n][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
-		a[i].y = tetrominos[n][i] / 2; //defining y coordinate of tetromino
+		a[i].x = (tetrominos[currentTetromino][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
+		a[i].y = tetrominos[currentTetromino][i] / 2; //defining y coordinate of tetromino
 	}
 	return colorNum;
 }
@@ -221,7 +242,6 @@ int gameWindow()
 	}
 	return 0;
 }
-
 
 int main()
 {
