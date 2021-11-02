@@ -23,13 +23,13 @@ struct Point
 //Defining tetrominos
 int tetrominos[7][4] =
 {
-	3,5,4,7, // T
-	2,4,5,7, // Z
-	3,5,4,6, // S
-	2,3,4,5, // O
-	1,3,5,7, // I
-	2,3,5,7, // L
-	3,5,7,6, // J
+	3,5,4,7, // T 0
+	2,4,5,7, // S 1
+	3,5,4,6, // Z 2
+	2,3,4,5, // O 3
+	1,3,5,7, // I 4
+	2,3,5,7, // L 5
+	3,5,7,6, // J 6
 };
 
 Text gameOverText;
@@ -66,7 +66,7 @@ int initialize()
 
 	// text center
 	gameOverTextRect = gameOverText.getLocalBounds();
-	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,gameOverTextRect.top + gameOverTextRect.height / 2.0f);
+	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f, gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
 	// background for text
 	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30} };
@@ -141,6 +141,10 @@ int newTetromino()
 	{
 		a[i].x = (tetrominos[currentTetromino][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
 		a[i].y = tetrominos[currentTetromino][i] / 2; //defining y coordinate of tetromino
+	}
+	if (colorNum != 4 && colorNum != 5)
+	{
+		rotate(colorNum);
 	}
 	return colorNum;
 }
@@ -292,15 +296,15 @@ int gameWindow()
 			sprite.move(28, 31); //offset
 			window.draw(sprite);
 		}
-		if ( isGameOver)
+		if (isGameOver)
 		{
 			window.draw(textBackgroundRect);
 			window.draw(gameOverText);
 		}
 		else
 		{
-				window.draw(frame);
-				
+			window.draw(frame);
+
 		}
 		window.display();
 	}
