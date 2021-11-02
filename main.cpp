@@ -32,6 +32,49 @@ int tetrominos[7][4] =
 	2,3,4,5, // O
 };
 
+Text gameOverText;
+RectangleShape textBackgroundRect;
+FloatRect gameOverTextRect;
+Font font;
+
+int loadResources()
+{
+	// Metinler icin kullanacagimiz font
+	if (!font.loadFromFile("sources/sansation.ttf"))
+	{
+		cout << "Font yuklenmesinde hata!" << endl;
+		return -1;
+	}
+	return 0;
+}
+
+int initialize()
+{
+	if (0 != loadResources())
+	{
+		return -1;
+	}
+
+
+	// message for game over
+	gameOverText.setPosition({ 320 / 2, 480 / 2 });
+	gameOverText.setFont(font);
+	gameOverText.setCharacterSize(20);
+	gameOverText.setFillColor(Color::Green);
+	gameOverText.setString("  Game Over ");
+
+
+	// text center
+	gameOverTextRect = gameOverText.getLocalBounds();
+	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,gameOverTextRect.top + gameOverTextRect.height / 2.0f);
+
+	// background for text
+	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 10} };
+	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
+	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
+	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
+		gameOverTextRect.top + gameOverTextRect.height / 2.0f);
+}
 //Collusion detection function
 bool collisionDetection()
 {
@@ -109,13 +152,14 @@ int gameWindow()
 	RenderWindow window(VideoMode(320, 480), "The Game!");
 	Texture tiles, bground, outFrame;
 	tiles.loadFromFile("sources/tiles.png");
-	bground.loadFromFile("sources/background.png");
-	outFrame.loadFromFile("sources/frame.png");
+	bground.loadFromFile("sn/background.png");
+	outFrame.loadFromFile("snn/frame.png");
 	Sprite sprite(tiles), background(bground), frame(outFrame);
 	Clock clock;
+	initialize();
 
-	int dx = 0; 
-	bool isRotated = 0; 
+	int dx = 0;
+	bool isRotated = 0;
 	bool isGameOver = false;
 	int colorNum = newTetromino();
 	float timer = 0, delay = 0.3;
@@ -150,8 +194,7 @@ int gameWindow()
 				}
 			}
 		}
-		// if the game is not over, keep running
-		if(false== isGameOver)
+		if (!isGameOver)
 		{
 			if (Keyboard::isKeyPressed(Keyboard::Down))
 			{
@@ -159,26 +202,26 @@ int gameWindow()
 			}
 
 			// <- Move ->
-			for (int i = 0; i < 4; i++) 
-			{ 
-				b[i] = a[i]; 
-				a[i].x += dx; 
+			for (int i = 0; i < 4; i++)
+			{
+				b[i] = a[i];
+				a[i].x += dx;
 			}
 			if (!collisionDetection())
 			{
-				for (int i = 0; i < 4; i++) 
-				{ 
-					a[i] = b[i]; 
+				for (int i = 0; i < 4; i++)
+				{
+					a[i] = b[i];
 				}
 			}
 
 			//Vertical motion
 			if (timer > delay)
 			{
-				for (int i = 0; i < 4; i++) 
-				{ 
-					b[i] = a[i]; 
-					a[i].y += 1; 
+				for (int i = 0; i < 4; i++)
+				{
+					b[i] = a[i];
+					a[i].y += 1;
 				}
 				if (!collisionDetection())
 				{
@@ -210,7 +253,6 @@ int gameWindow()
 					k--;
 				}
 			}
-			// Checking for game over
 			for (int i = 0; i < fieldColumn; i++)
 			{
 				if (gameField[0][i] || gameField[1][i])
@@ -219,10 +261,10 @@ int gameWindow()
 					break;
 				}
 			}
-		}	
+		}
 
-		dx = 0; 
-		isRotated = 0; 
+		dx = 0;
+		isRotated = 0;
 		delay = 0.3;
 
 		//Drawing to the screen
@@ -250,13 +292,16 @@ int gameWindow()
 			sprite.move(28, 31); //offset
 			window.draw(sprite);
 		}
-		// if the game is over, show game over screen
-		if(true==isGameOver)
+		if ( isGameOver)
 		{
-			//window.draw();	// burayı yapamadım ama çalışıp çalışamadığını anlamak için
-			cout << "end of the game ";	// yazdırdım çalışıyor
+			window.draw(textBackgroundRect);
+			window.draw(gameOverText);
 		}
-		window.draw(frame);
+		else
+		{
+				window.draw(frame);
+				
+		}
 		window.display();
 	}
 	return 0;
