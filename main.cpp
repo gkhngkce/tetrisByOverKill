@@ -59,7 +59,7 @@ int initialize()
 	// message for game over
 	gameOverText.setPosition({ 320 / 2, 480 / 2 });
 	gameOverText.setFont(font);
-	gameOverText.setCharacterSize(20);
+	gameOverText.setCharacterSize(40);
 	gameOverText.setFillColor(Color::Green);
 	gameOverText.setString("  Game Over ");
 
@@ -69,7 +69,7 @@ int initialize()
 	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
 	// background for text
-	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 10} };
+	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30} };
 	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
 	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
@@ -152,8 +152,8 @@ int gameWindow()
 	RenderWindow window(VideoMode(320, 480), "The Game!");
 	Texture tiles, bground, outFrame;
 	tiles.loadFromFile("sources/tiles.png");
-	bground.loadFromFile("sn/background.png");
-	outFrame.loadFromFile("snn/frame.png");
+	bground.loadFromFile("sources/background.png");
+	outFrame.loadFromFile("sources/frame.png");
 	Sprite sprite(tiles), background(bground), frame(outFrame);
 	Clock clock;
 	initialize();
