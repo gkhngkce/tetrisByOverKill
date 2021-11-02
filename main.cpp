@@ -254,7 +254,7 @@ int gameWindow()
 		if(true==isGameOver)
 		{
 			//window.draw();	// burayı yapamadım ama çalışıp çalışamadığını anlamak için
-			cout << "end of the game "	// yazdırdım çalışıyor
+			cout << "end of the game ";	// yazdırdım çalışıyor
 		}
 		window.draw(frame);
 		window.display();
