@@ -116,6 +116,7 @@ int gameWindow()
 
 	int dx = 0; 
 	bool isRotated = 0; 
+	bool isGameOver = false;
 	int colorNum = newTetromino();
 	float timer = 0, delay = 0.3;
 
@@ -149,64 +150,76 @@ int gameWindow()
 				}
 			}
 		}
-
-		if (Keyboard::isKeyPressed(Keyboard::Down))
+		// if the game is not over, keep running
+		if(false== isGameOver)
 		{
-			delay = 0.05;
-		}
-
-		// <- Move ->
-		for (int i = 0; i < 4; i++) 
-		{ 
-			b[i] = a[i]; 
-			a[i].x += dx; 
-		}
-		if (!collisionDetection())
-		{
-			for (int i = 0; i < 4; i++) 
-			{ 
-				a[i] = b[i]; 
+			if (Keyboard::isKeyPressed(Keyboard::Down))
+			{
+				delay = 0.05;
 			}
-		}
 
-		//Vertical motion
-		if (timer > delay)
-		{
+			// <- Move ->
 			for (int i = 0; i < 4; i++) 
 			{ 
 				b[i] = a[i]; 
-				a[i].y += 1; 
+				a[i].x += dx; 
 			}
 			if (!collisionDetection())
 			{
-				for (int i = 0; i < 4; i++)
-				{
-					gameField[b[i].y][b[i].x] = colorNum;
+				for (int i = 0; i < 4; i++) 
+				{ 
+					a[i] = b[i]; 
 				}
-				//random tetromino generation and coloring
-				colorNum = newTetromino();
 			}
-			timer = 0;
-		}
 
-		//Line clear check
-		int k = fieldRow - 1;
-		for (int i = fieldRow - 1; i > 0; i--)
-		{
-			int count = 0;
-			for (int j = 0; j < fieldColumn; j++)
+			//Vertical motion
+			if (timer > delay)
 			{
-				if (gameField[i][j])
-				{
-					count++;
+				for (int i = 0; i < 4; i++) 
+				{ 
+					b[i] = a[i]; 
+					a[i].y += 1; 
 				}
-				gameField[k][j] = gameField[i][j];
+				if (!collisionDetection())
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						gameField[b[i].y][b[i].x] = colorNum;
+					}
+					//random tetromino generation and coloring
+					colorNum = newTetromino();
+				}
+				timer = 0;
 			}
-			if (count < fieldColumn)
+
+			//Line clear check
+			int k = fieldRow - 1;
+			for (int i = fieldRow - 1; i > 0; i--)
 			{
-				k--;
+				int count = 0;
+				for (int j = 0; j < fieldColumn; j++)
+				{
+					if (gameField[i][j])
+					{
+						count++;
+					}
+					gameField[k][j] = gameField[i][j];
+				}
+				if (count < fieldColumn)
+				{
+					k--;
+				}
 			}
-		}
+			// Checking for game over
+			for (int i = 0; i < fieldColumn; i++)
+			{
+				if (gameField[0][i] || gameField[1][i])
+				{
+					isGameOver = true;
+					break;
+				}
+			}
+		}	
 
 		dx = 0; 
 		isRotated = 0; 
@@ -236,6 +249,12 @@ int gameWindow()
 			sprite.setPosition(a[i].x * 18, a[i].y * 18);
 			sprite.move(28, 31); //offset
 			window.draw(sprite);
+		}
+		// if the game is over, show game over screen
+		if(true==isGameOver)
+		{
+			//window.draw();	// burayı yapamadım ama çalışıp çalışamadığını anlamak için
+			cout << "end of the game "	// yazdırdım çalışıyor
 		}
 		window.draw(frame);
 		window.display();
