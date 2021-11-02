@@ -6,14 +6,22 @@
 using namespace sf;
 using namespace std;
 
+//Gamoever screen variables
+Text gameOverText;
+RectangleShape textBackgroundRect;
+FloatRect gameOverTextRect;
+Font font;
+
 //Game field variables
 const int fieldRow = 20;
 const int fieldColumn = 10;
-int nextTetromino = 0;
 
 //Defining the game field
 int gameField[fieldRow][fieldColumn] = { 0 };
+
+//Defining the batch of tetrominos
 list <int> tetrominoBatch;
+int nextTetromino = 0;
 
 // ??? point of tetrominos ???
 struct Point
@@ -33,17 +41,11 @@ int tetrominos[7][4] =
 	3,5,7,6, // J - 6
 };
 
-Text gameOverText;
-RectangleShape textBackgroundRect;
-FloatRect gameOverTextRect;
-Font font;
-
 int loadResources()
 {
-	// Metinler icin kullanacagimiz font
 	if (!font.loadFromFile("sources/sansation.ttf"))
 	{
-		cout << "Font yuklenmesinde hata!" << endl;
+		cout << "Failed to load font." << endl;
 		return -1;
 	}
 	return 0;
@@ -55,27 +57,25 @@ int initialize()
 	{
 		return -1;
 	}
-
-
-	// message for game over
+	//Message for game over
 	gameOverText.setPosition({ 320 / 2, 480 / 2 });
 	gameOverText.setFont(font);
 	gameOverText.setCharacterSize(40);
 	gameOverText.setFillColor(Color::Green);
 	gameOverText.setString("  Game Over ");
 
-
-	// text center
+	//Centeralizing the text
 	gameOverTextRect = gameOverText.getLocalBounds();
 	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f, gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
-	// background for text
+	//Text background
 	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
 	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
 	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
 		gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 }
+
 //Collusion detection function
 bool collisionDetection()
 {
@@ -192,7 +192,6 @@ int gameWindow()
 			{
 				if (event.key.code == Keyboard::Up)
 				{
-					//cout << "Current Tetromino: " << colorNum;
 					rotate(colorNum);
 				}
 				if (event.key.code == Keyboard::Left)
