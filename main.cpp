@@ -94,7 +94,7 @@ bool collisionDetection()
 
 int rotate(int currTetromino)
 {
-	if (currTetromino != 7)
+	if (currTetromino != 4)
 	{
 		Point centerOfRotation = a[1]; //center of rotation
 		for (int i = 0; i < 4; i++)
