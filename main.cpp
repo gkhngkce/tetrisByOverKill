@@ -9,6 +9,7 @@ using namespace std;
 //Game field variables
 const int fieldRow = 20;
 const int fieldColumn = 10;
+int nextTetromino = 0;
 
 //Defining the game field
 int gameField[fieldRow][fieldColumn] = { 0 };
@@ -23,13 +24,13 @@ struct Point
 //Defining tetrominos
 int tetrominos[7][4] =
 {
-	3,5,4,7, // T 0
-	2,4,5,7, // S 1
-	3,5,4,6, // Z 2
-	2,3,4,5, // O 3
-	1,3,5,7, // I 4
-	2,3,5,7, // L 5
-	3,5,7,6, // J 6
+	3,5,4,7, // T - 0
+	2,4,5,7, // S - 1
+	3,5,4,6, // Z - 2
+	2,3,4,5, // O - 3
+	1,3,5,7, // I - 4
+	2,3,5,7, // L - 5
+	3,5,7,6, // J - 6
 };
 
 Text gameOverText;
@@ -69,7 +70,7 @@ int initialize()
 	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f, gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
 	// background for text
-	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30} };
+	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
 	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
 	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
@@ -146,6 +147,12 @@ int newTetromino()
 	{
 		rotate(colorNum);
 	}
+	if (tetrominoBatch.empty())
+	{
+		createTetrominoBatch();
+	}
+	nextTetromino= tetrominoBatch.back();
+	cout << "Current Tetromino :" << colorNum - 1 << "\tNext Tetromino :" << nextTetromino << endl;
 	return colorNum;
 }
 
@@ -153,7 +160,7 @@ int newTetromino()
 int gameWindow()
 {
 	srand(time(0));
-	RenderWindow window(VideoMode(320, 480), "The Game!");
+	RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
 	Texture tiles, bground, outFrame;
 	tiles.loadFromFile("sources/tiles.png");
 	bground.loadFromFile("sources/background.png");
@@ -166,7 +173,7 @@ int gameWindow()
 	bool isRotated = 0;
 	bool isGameOver = false;
 	int colorNum = newTetromino();
-	float timer = 0, delay = 0.3;
+	float timer = 0, delay = 0.5;
 
 	while (window.isOpen())
 	{
@@ -185,7 +192,7 @@ int gameWindow()
 			{
 				if (event.key.code == Keyboard::Up)
 				{
-					cout << "Current Tetromino: " << colorNum;
+					//cout << "Current Tetromino: " << colorNum;
 					rotate(colorNum);
 				}
 				if (event.key.code == Keyboard::Left)
@@ -235,6 +242,7 @@ int gameWindow()
 					}
 					//random tetromino generation and coloring
 					colorNum = newTetromino();
+					
 				}
 				timer = 0;
 			}
