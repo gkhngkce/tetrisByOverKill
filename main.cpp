@@ -2,12 +2,14 @@
 #include <time.h>
 #include <iostream>
 #include <list>
+#include <fstream>
+#include <string>
 
 using namespace sf;
 using namespace std;
 
 //Gamoever screen variables
-Text gameOverText,scoreText,totalLinesClearText;
+Text gameOverText, scoreText, totalLinesClearText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
@@ -15,6 +17,7 @@ Font gameOverFont;
 //Score variables
 int score = 0;
 int totalLinesCleared = 0;
+string name; //player name
 
 //Game field variables
 const int fieldRow = 24;
@@ -108,7 +111,7 @@ int initialize()
 	gameOverText.setString("  Game Over ");
 
 	//Score text on the right sight
-	scoreText.setPosition(225,287);
+	scoreText.setPosition(225, 287);
 	scoreText.setFont(gameOverFont);
 	scoreText.setCharacterSize(15);
 	scoreText.setFillColor(Color::Black);
@@ -423,7 +426,7 @@ int gameWindow()
 		else
 		{
 			window.draw(frame);
-			
+
 		}
 		window.display();
 	}
@@ -445,6 +448,17 @@ int main()
 	{
 		gameWindow();
 	}
+
+	cout << "Input name: ";
+	cin >> name;
+	ofstream highscores;
+	highscores.open("highscores.txt");
+	string savedtext;
+	string strScore = to_string(score);
+	string strLinesCleared = to_string(totalLinesCleared);
+	savedtext = name + ": Highscore = " + strScore + ", Total lines cleared = " + strLinesCleared + "\n";
+	highscores << savedtext;
+	highscores.close();
 
 	return 0;
 }
