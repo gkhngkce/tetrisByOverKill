@@ -64,9 +64,9 @@ bool wannaContinue(string section)
 	}
 }
 
-int loadTextures(Texture &texture, string path)
+int loadTextures(Texture& texture, string path)
 {
-	if (!texture.loadFromFile(path)) 
+	if (!texture.loadFromFile(path))
 	{
 		cout << "Failed to load texture from:" << path << endl;
 		if (!(wannaContinue("Texture Loading")))
@@ -77,7 +77,7 @@ int loadTextures(Texture &texture, string path)
 	return 0;
 }
 
-int loadFonts(Font &font, string path)
+int loadFonts(Font& font, string path)
 {
 	if (!font.loadFromFile(path))
 	{
@@ -112,7 +112,7 @@ int initialize()
 	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f, gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
 	//Text background
-	textBackgroundRect = RectangleShape{Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
+	textBackgroundRect = RectangleShape{ Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
 	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
 	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
@@ -158,7 +158,15 @@ int rotate(int currTetromino)
 		}
 	}
 	return 0;
-};
+}
+
+int counterRotate(int currTetromino)
+{
+	rotate(currTetromino);
+	rotate(currTetromino);
+	rotate(currTetromino);
+	return 0;
+}
 
 void createTetrominoBatch()
 {
@@ -195,7 +203,7 @@ int newTetromino()
 	{
 		createTetrominoBatch();
 	}
-	nextTetromino= tetrominoBatch.back();
+	nextTetromino = tetrominoBatch.back();
 	cout << "Current Tetromino :" << currentTetromino - 1 << "\tNext Tetromino :" << nextTetromino << endl;
 	return currentTetromino;
 }
@@ -235,6 +243,10 @@ int gameWindow()
 				if (event.key.code == Keyboard::Up)
 				{
 					rotate(currentTetromino);
+				}
+				if (event.key.code == Keyboard::Z)
+				{
+					counterRotate(currentTetromino);
 				}
 				if (event.key.code == Keyboard::Left)
 				{
@@ -323,28 +335,28 @@ int gameWindow()
 					totalLinesCleared += linesCleared;
 					scoreLinesCleared += linesCleared;
 				}
-				
+
 			}
 			switch (scoreLinesCleared)
 			{
-				case 1:
-					score += 40;
-					cout << score << endl;
-					break;
-				case 2:
-					score += 100;
-					cout << score << endl;
-					break;
-				case 3:
-					score += 300;
-					cout << score << endl;
-					break;
-				case 4:
-					score += 1200;
-					cout << score << endl;
-					break;
+			case 1:
+				score += 40;
+				cout << score << endl;
+				break;
+			case 2:
+				score += 100;
+				cout << score << endl;
+				break;
+			case 3:
+				score += 300;
+				cout << score << endl;
+				break;
+			case 4:
+				score += 1200;
+				cout << score << endl;
+				break;
 			}
-			
+
 			for (int i = 0; i < fieldColumn; i++)
 			{
 				if (gameField[0][i] || gameField[1][i])
