@@ -304,6 +304,7 @@ int gameWindow()
 			for (int i = fieldRow - 1; i > 0; i--)
 			{
 				int count = 0;
+				int linesCleared = 0;
 				for (int j = 0; j < fieldColumn; j++)
 				{
 					if (gameField[i][j])
