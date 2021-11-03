@@ -175,25 +175,25 @@ int newTetromino()
 	{
 		createTetrominoBatch();
 	}
-	int currentTetromino = tetrominoBatch.back();
+	int createdTetromino = tetrominoBatch.back();
 	tetrominoBatch.pop_back();
-	int colorNum = currentTetromino + 1;
+	int currentTetromino = createdTetromino + 1;
 	for (int i = 0; i < 4; i++)
 	{
-		a[i].x = (tetrominos[currentTetromino][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
-		a[i].y = tetrominos[currentTetromino][i] / 2; //defining y coordinate of tetromino
+		a[i].x = (tetrominos[createdTetromino][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
+		a[i].y = tetrominos[createdTetromino][i] / 2; //defining y coordinate of tetromino
 	}
-	if (colorNum != 4 && colorNum != 5)
+	if (currentTetromino != 4 && currentTetromino != 5)
 	{
-		rotate(colorNum);
+		rotate(currentTetromino);
 	}
 	if (tetrominoBatch.empty())
 	{
 		createTetrominoBatch();
 	}
 	nextTetromino= tetrominoBatch.back();
-	cout << "Current Tetromino :" << colorNum - 1 << "\tNext Tetromino :" << nextTetromino << endl;
-	return colorNum;
+	cout << "Current Tetromino :" << currentTetromino - 1 << "\tNext Tetromino :" << nextTetromino << endl;
+	return currentTetromino;
 }
 
 
@@ -210,7 +210,7 @@ int gameWindow()
 	int dx = 0;
 	bool isRotated = 0;
 	bool isGameOver = false;
-	int colorNum = newTetromino();
+	int currentTetromino = newTetromino();
 	float timer = 0, delay = 0.5;
 
 	while (window.isOpen())
@@ -230,7 +230,7 @@ int gameWindow()
 			{
 				if (event.key.code == Keyboard::Up)
 				{
-					rotate(colorNum);
+					rotate(currentTetromino);
 				}
 				if (event.key.code == Keyboard::Left)
 				{
@@ -275,10 +275,10 @@ int gameWindow()
 				{
 					for (int i = 0; i < 4; i++)
 					{
-						gameField[b[i].y][b[i].x] = colorNum;
+						gameField[b[i].y][b[i].x] = currentTetromino;
 					}
 					//random tetromino generation and coloring
-					colorNum = newTetromino();
+					currentTetromino = newTetromino();
 					
 				}
 				timer = 0;
@@ -336,7 +336,7 @@ int gameWindow()
 		}
 		for (int i = 0; i < 4; i++)
 		{
-			sprite.setTextureRect(IntRect(colorNum * 18, 0, 18, 18));
+			sprite.setTextureRect(IntRect(currentTetromino * 18, 0, 18, 18));
 			sprite.setPosition(a[i].x * 18, a[i].y * 18);
 			sprite.move(28, 31); //offset
 			window.draw(sprite);
