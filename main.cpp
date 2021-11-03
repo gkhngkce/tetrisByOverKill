@@ -12,12 +12,8 @@ RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
 
-//Score variables
-int score = 0;
-int totalLinesCleared = 0;
-
 //Game field variables
-const int fieldRow = 20;
+const int fieldRow = 24;
 const int fieldColumn = 10;
 
 //Defining the game field
@@ -41,8 +37,8 @@ struct Point
 int tetrominos[7][4] =
 {
 	3,5,4,7, // T - 0
-	3,5,4,6, // Z - 1
-	2,4,5,7, // S - 2
+	2,4,5,7, // S - 1
+	3,5,4,6, // Z - 2
 	2,3,4,5, // O - 3
 	1,3,5,7, // I - 4
 	2,3,5,7, // L - 5
@@ -82,7 +78,7 @@ int loadFonts(Font &font, string path)
 	if (!font.loadFromFile(path))
 	{
 		cout << "Failed to load font from:" << path << endl;
-		if (!(wannaContinue("Gameover Font Loading")))
+		if (!(wannaContinue("Font Loading")))
 		{
 			return -1;
 		}
@@ -92,7 +88,7 @@ int loadFonts(Font &font, string path)
 
 int initialize()
 {
-	if (loadFonts(gameOverFont, "sources/sansation.ttf") != 0 || loadTextures(tiles, "sources/tiles.png") != 0 || loadTextures(bground, "sources/background.png") != 0	|| loadTextures(outFrame, "sources/frame.png") != 0)
+	if (loadFonts(gameOverFont, "sources/sansation.ttf") != 0 || loadTextures(tiles, "sources/tiles.png") != 0 || loadTextures(bground, "sources/background.png") != 0)
 	{
 		return -1;
 	}
@@ -283,24 +279,31 @@ int gameWindow()
 					}
 					//random tetromino generation and coloring
 					currentTetromino = newTetromino();
-					
+				}
+				else
+				{
+					for (int i = 0; i < fieldColumn; i++)
+					{
+						if (gameField[4][i])
+						{
+							isGameOver = true;
+							break;
+						}
+					}
 				}
 				timer = 0;
 			}
 
 			//Line clear check
 			int k = fieldRow - 1;
-			int scoreLinesCleared = 0; // for calculating score
 			for (int i = fieldRow - 1; i > 0; i--)
 			{
 				int count = 0;
-				int linesCleared = 0; // for determining line clears
 				for (int j = 0; j < fieldColumn; j++)
 				{
 					if (gameField[i][j])
 					{
 						count++;
-
 					}
 					gameField[k][j] = gameField[i][j];
 				}
@@ -308,44 +311,15 @@ int gameWindow()
 				{
 					k--;
 				}
-				else
-				{
-					linesCleared++;
-					totalLinesCleared += linesCleared;
-					scoreLinesCleared += linesCleared;
-				}
-				
 			}
-			switch (scoreLinesCleared)
-			{
-				case 1:
-					score += 40;
-					cout << score << endl;
-					break;
-				case 2:
-					score += 100;
-					cout << score << endl;
-					break;
-				case 3:
-					score += 300;
-					cout << score << endl;
-					break;
-				case 4:
-					score += 1200;
-					cout << score << endl;
-					break;
-			}
-
 			for (int i = 0; i < fieldColumn; i++)
 			{
 				if (gameField[0][i] || gameField[1][i])
 				{
-					cout << "Final Score: " << score << endl << "Total Lines Cleared: " << totalLinesCleared << endl;
 					isGameOver = true;
 					break;
 				}
 			}
-
 		}
 
 		dx = 0;
