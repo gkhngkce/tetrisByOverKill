@@ -7,7 +7,7 @@ using namespace sf;
 using namespace std;
 
 //Gamoever screen variables
-Text gameOverText,scoreText,totalLinesClearText;
+Text gameOverText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
@@ -107,20 +107,6 @@ int initialize()
 	gameOverText.setFillColor(Color::Green);
 	gameOverText.setString("  Game Over ");
 
-	//Score text on the right sight
-	scoreText.setPosition(225,287);
-	scoreText.setFont(gameOverFont);
-	scoreText.setCharacterSize(15);
-	scoreText.setFillColor(Color::Black);
-	scoreText.setString(to_string(score));
-
-	//Score text on the right sight
-	totalLinesClearText.setPosition(225, 315);
-	totalLinesClearText.setFont(gameOverFont);
-	totalLinesClearText.setCharacterSize(15);
-	totalLinesClearText.setFillColor(Color::Black);
-	totalLinesClearText.setString(to_string(totalLinesCleared));
-
 	//Centeralizing the text
 	gameOverTextRect = gameOverText.getLocalBounds();
 	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f, gameOverTextRect.top + gameOverTextRect.height / 2.0f);
@@ -171,6 +157,7 @@ int rotate(int currTetromino)
 			}
 		}
 	}
+	sleep(milliseconds(20));
 	return 0;
 }
 
@@ -252,7 +239,7 @@ int gameWindow()
 			{
 				window.close();
 			}
-			if (event.type == Event::KeyPressed)
+			/*if (event.type == Event::iKeyPressed)
 			{
 				if (event.key.code == Keyboard::Up)
 				{
@@ -270,10 +257,18 @@ int gameWindow()
 				{
 					dx = 1;
 				}
-			}
+			}*/
 		}
 		if (!isGameOver)
 		{
+			if (Keyboard::isKeyPressed(Keyboard::Up))
+				rotate(currentTetromino);
+			if (Keyboard::isKeyPressed(Keyboard::Z))
+				counterRotate(currentTetromino);
+			if (Keyboard::isKeyPressed(Keyboard::Left))
+				dx = -1;
+			if (Keyboard::isKeyPressed(Keyboard::Right))
+				dx = 1;
 			if (Keyboard::isKeyPressed(Keyboard::Down))
 			{
 				delay = 0.05;
@@ -284,6 +279,7 @@ int gameWindow()
 			{
 				b[i] = a[i];
 				a[i].x += dx;
+				sleep(milliseconds(18));
 			}
 			if (!collisionDetection())
 			{
@@ -307,7 +303,7 @@ int gameWindow()
 					{
 						gameField[b[i].y][b[i].x] = currentTetromino;
 					}
-					//Getting the next tetromino from batch
+					//random tetromino generation and coloring
 					currentTetromino = newTetromino();
 				}
 				else
@@ -389,10 +385,6 @@ int gameWindow()
 		//Drawing to the screen
 		window.clear(Color::White);
 		window.draw(background);
-		scoreText.setString(to_string(score));
-		totalLinesClearText.setString(to_string(totalLinesCleared));
-		window.draw(scoreText);
-		window.draw(totalLinesClearText);
 
 		for (int i = 0; i < fieldRow; i++)
 		{
@@ -423,7 +415,7 @@ int gameWindow()
 		else
 		{
 			window.draw(frame);
-			
+
 		}
 		window.display();
 	}
