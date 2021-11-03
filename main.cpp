@@ -340,6 +340,7 @@ int gameWindow()
 			{
 				if (gameField[0][i] || gameField[1][i])
 				{
+					cout << "Final Score: " << score << endl << "Total Lines Cleared: " << totalLinesCleared << endl;
 					isGameOver = true;
 					break;
 				}
