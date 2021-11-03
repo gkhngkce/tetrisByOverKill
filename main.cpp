@@ -12,6 +12,10 @@ RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
 
+//Score variables
+int score = 0;
+int totalLinesCleared = 0;
+
 //Game field variables
 const int fieldRow = 24;
 const int fieldColumn = 10;
@@ -296,6 +300,7 @@ int gameWindow()
 
 			//Line clear check
 			int k = fieldRow - 1;
+			int scoreLinesCleared = 0; // for calculating score
 			for (int i = fieldRow - 1; i > 0; i--)
 			{
 				int count = 0;
@@ -311,11 +316,39 @@ int gameWindow()
 				{
 					k--;
 				}
+				else
+				{
+					linesCleared++;
+					totalLinesCleared += linesCleared;
+					scoreLinesCleared += linesCleared;
+				}
+				
 			}
+			switch (scoreLinesCleared)
+			{
+				case 1:
+					score += 40;
+					cout << score << endl;
+					break;
+				case 2:
+					score += 100;
+					cout << score << endl;
+					break;
+				case 3:
+					score += 300;
+					cout << score << endl;
+					break;
+				case 4:
+					score += 1200;
+					cout << score << endl;
+					break;
+			}
+			
 			for (int i = 0; i < fieldColumn; i++)
 			{
 				if (gameField[0][i] || gameField[1][i])
 				{
+					cout << "Final Score: " << score << endl << "Total Lines Cleared: " << totalLinesCleared << endl;
 					isGameOver = true;
 					break;
 				}
