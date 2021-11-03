@@ -9,7 +9,7 @@ using namespace sf;
 using namespace std;
 
 //Gamoever screen variables
-Text gameOverText, scoreText, totalLinesClearText;
+Text gameOverText,scoreText,totalLinesClearText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
@@ -17,7 +17,7 @@ Font gameOverFont;
 //Score variables
 int score = 0;
 int totalLinesCleared = 0;
-string name; //player name
+string name;
 
 //Game field variables
 const int fieldRow = 24;
@@ -28,7 +28,7 @@ int gameField[fieldRow][fieldColumn] = { 0 };
 
 //Textures of gamefield
 Texture tiles, bground, outFrame;
-Sprite sprite, background, frame;
+Sprite sprite, background,nextTetrominoSprite;
 
 //Defining the batch of tetrominos
 list <int> tetrominoBatch;
@@ -38,7 +38,7 @@ int nextTetromino = 0;
 struct Point
 {
 	int x, y;
-} a[4], b[4];
+} a[4], b[4],c[4];
 
 //Defining tetrominos
 int tetrominos[7][4] =
@@ -101,23 +101,23 @@ int initialize()
 	}
 	sprite.setTexture(tiles);
 	background.setTexture(bground);
-	frame.setTexture(outFrame);
+	nextTetrominoSprite.setTexture(tiles);
 
 	//Message for game over
 	gameOverText.setPosition({ 320 / 2, 480 / 2 });
 	gameOverText.setFont(gameOverFont);
 	gameOverText.setCharacterSize(40);
 	gameOverText.setFillColor(Color::Green);
-	gameOverText.setString("  Game Over ");
+	gameOverText.setString(" Game Over ");
 
 	//Score text on the right sight
-	scoreText.setPosition(225, 287);
+	scoreText.setPosition(225,287);
 	scoreText.setFont(gameOverFont);
 	scoreText.setCharacterSize(15);
 	scoreText.setFillColor(Color::Black);
 	scoreText.setString(to_string(score));
 
-	//Score text on the right sight
+	//Total lines cleared text on the right sight
 	totalLinesClearText.setPosition(225, 315);
 	totalLinesClearText.setFont(gameOverFont);
 	totalLinesClearText.setCharacterSize(15);
@@ -389,9 +389,22 @@ int gameWindow()
 		isRotated = 0;
 		delay = 0.3;
 
+		
 		//Drawing to the screen
 		window.clear(Color::White);
 		window.draw(background);
+		for (int i = 0; i < 4; i++)
+		{
+			c[i].x = tetrominos[nextTetromino][i] % 2;
+			c[i].y = tetrominos[nextTetromino][i] / 2;
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			nextTetrominoSprite.setPosition((c[i].x*18)+250, (c[i].y*18)+155);
+			nextTetrominoSprite.setTextureRect(IntRect((nextTetromino+1) * 18, 0, 18, 18));
+			window.draw(nextTetrominoSprite);
+		}
+
 		scoreText.setString(to_string(score));
 		totalLinesClearText.setString(to_string(totalLinesCleared));
 		window.draw(scoreText);
@@ -422,11 +435,6 @@ int gameWindow()
 		{
 			window.draw(textBackgroundRect);
 			window.draw(gameOverText);
-		}
-		else
-		{
-			window.draw(frame);
-
 		}
 		window.display();
 	}
