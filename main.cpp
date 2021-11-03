@@ -10,7 +10,7 @@ using namespace std;
 Text gameOverText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
-Font font;
+Font gameOverFont;
 
 //Game field variables
 const int fieldRow = 20;
@@ -18,6 +18,10 @@ const int fieldColumn = 10;
 
 //Defining the game field
 int gameField[fieldRow][fieldColumn] = { 0 };
+
+//Textures of gamefield
+Texture tiles, bground, outFrame;
+Sprite sprite, background, frame;
 
 //Defining the batch of tetrominos
 list <int> tetrominoBatch;
@@ -41,25 +45,60 @@ int tetrominos[7][4] =
 	3,5,7,6, // J - 6
 };
 
-int loadResources()
+bool wannaContinue(string section)
 {
-	if (!font.loadFromFile("sources/sansation.ttf"))
+	char decision;
+	cout << endl << section << "section has problem with loading files GAME MAY NOT WORK wanna continue anyway(y/n)? :";
+	cin >> decision;
+	if (decision == 'y' || decision == 'Y')
 	{
-		cout << "Failed to load font." << endl;
-		return -1;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+int loadTextures(Texture &texture, string path)
+{
+	if (!texture.loadFromFile(path)) 
+	{
+		cout << "Failed to load texture from:" << path << endl;
+		if (!(wannaContinue("Texture Loading")))
+		{
+			return -1;
+		}
+	}
+	return 0;
+}
+
+int loadFonts(Font &font, string path)
+{
+	if (!font.loadFromFile(path))
+	{
+		cout << "Failed to load font from:" << path << endl;
+		if (!(wannaContinue("Gameover Font Loading")))
+		{
+			return -1;
+		}
 	}
 	return 0;
 }
 
 int initialize()
 {
-	if (0 != loadResources())
+	if (loadFonts(gameOverFont, "sources/sansation.ttf") != 0 || loadTextures(tiles, "sources/tiles.png") != 0 || loadTextures(bground, "sources/background.png") != 0	|| loadTextures(outFrame, "sources/frame.png") != 0)
 	{
 		return -1;
 	}
+	sprite.setTexture(tiles);
+	background.setTexture(bground);
+	frame.setTexture(outFrame);
+
 	//Message for game over
 	gameOverText.setPosition({ 320 / 2, 480 / 2 });
-	gameOverText.setFont(font);
+	gameOverText.setFont(gameOverFont);
 	gameOverText.setCharacterSize(40);
 	gameOverText.setFillColor(Color::Green);
 	gameOverText.setString("  Game Over ");
@@ -69,11 +108,12 @@ int initialize()
 	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f, gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
 	//Text background
-	textBackgroundRect = sf::RectangleShape{ sf::Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
+	textBackgroundRect = RectangleShape{Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
 	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
 	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
 		gameOverTextRect.top + gameOverTextRect.height / 2.0f);
+	return 0;
 }
 
 //Collusion detection function
@@ -159,16 +199,14 @@ int newTetromino()
 
 int gameWindow()
 {
+	//initialize game resources if there is a problem do not run game
+	if (initialize() != 0)
+	{
+		return -1;
+	}
 	srand(time(0));
 	RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
-	Texture tiles, bground, outFrame;
-	tiles.loadFromFile("sources/tiles.png");
-	bground.loadFromFile("sources/background.png");
-	outFrame.loadFromFile("sources/frame.png");
-	Sprite sprite(tiles), background(bground), frame(outFrame);
 	Clock clock;
-	initialize();
-
 	int dx = 0;
 	bool isRotated = 0;
 	bool isGameOver = false;
