@@ -7,7 +7,7 @@ using namespace sf;
 using namespace std;
 
 //Gamoever screen variables
-Text gameOverText;
+Text gameOverText,scoreText,totalLinesClearText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
@@ -106,6 +106,20 @@ int initialize()
 	gameOverText.setCharacterSize(40);
 	gameOverText.setFillColor(Color::Green);
 	gameOverText.setString("  Game Over ");
+
+	//Score text on the right sight
+	scoreText.setPosition(225,287);
+	scoreText.setFont(gameOverFont);
+	scoreText.setCharacterSize(15);
+	scoreText.setFillColor(Color::Black);
+	scoreText.setString(to_string(score));
+
+	//Score text on the right sight
+	totalLinesClearText.setPosition(225, 315);
+	totalLinesClearText.setFont(gameOverFont);
+	totalLinesClearText.setCharacterSize(15);
+	totalLinesClearText.setFillColor(Color::Black);
+	totalLinesClearText.setString(to_string(totalLinesCleared));
 
 	//Centeralizing the text
 	gameOverTextRect = gameOverText.getLocalBounds();
@@ -293,7 +307,7 @@ int gameWindow()
 					{
 						gameField[b[i].y][b[i].x] = currentTetromino;
 					}
-					//random tetromino generation and coloring
+					//Getting the next tetromino from batch
 					currentTetromino = newTetromino();
 				}
 				else
@@ -375,6 +389,10 @@ int gameWindow()
 		//Drawing to the screen
 		window.clear(Color::White);
 		window.draw(background);
+		scoreText.setString(to_string(score));
+		totalLinesClearText.setString(to_string(totalLinesCleared));
+		window.draw(scoreText);
+		window.draw(totalLinesClearText);
 
 		for (int i = 0; i < fieldRow; i++)
 		{
@@ -405,7 +423,7 @@ int gameWindow()
 		else
 		{
 			window.draw(frame);
-
+			
 		}
 		window.display();
 	}
