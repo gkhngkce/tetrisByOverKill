@@ -19,6 +19,8 @@ int score = 0;
 int totalLinesCleared = 0;
 string name;
 
+bool isGameOver = false;
+
 //Game field variables
 const int fieldRow = 24;
 const int fieldColumn = 10;
@@ -272,7 +274,7 @@ int gameWindow()
 	Clock clock;
 	int dx = 0;
 	bool isRotated = 0;
-	bool isGameOver = false;
+	isGameOver = false;
 	int currentTetromino = newTetromino();
 	float timer = 0, delay = 0.5;
 
@@ -482,8 +484,11 @@ int main()
 		}
 		readHighscores.close();
 	}
-	cout << "Input name: ";
-	cin >> name;
-	highscoreWrite(name);
+	if (isGameOver)
+	{
+		cout << "Input name: ";
+		cin >> name;
+		highscoreWrite(name);
+	}
 	return 0;
 }
