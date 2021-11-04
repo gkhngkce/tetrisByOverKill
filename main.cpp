@@ -82,6 +82,8 @@ void Scoring(int linesCleared)
 {
 	switch (linesCleared)
 	{
+	case 0:
+		break;
 	case 1:
 		score += 40;
 		cout << score << endl;
@@ -98,6 +100,8 @@ void Scoring(int linesCleared)
 		score += 1200;
 		cout << score << endl;
 		break;
+	default:
+		cout << "Invalid amount of lines cleared. No score has been added.";
 	}
 	scoreText.setString(to_string(score));
 	totalLinesClearText.setString(to_string(totalLinesCleared));
@@ -272,17 +276,6 @@ int newTetromino()
 	return currentTetromino;
 }
 
-void clearTable()
-{
-	for (int i = 0; i < fieldRow; i++)
-	{
-		for (int j = 0; j < fieldColumn; j++)
-		{
-			gameField[i][j] = 0;
-		}
-	}
-}
-
 int gameWindow()
 {
 	//initialize game resources if there is a problem do not run game
@@ -295,7 +288,7 @@ int gameWindow()
 	RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
 	auto resolution = VideoMode::getDesktopMode();
 	window.setSize({ 480, 720 });
-	window.setPosition(Vector2i(resolution.width / 2 - window.getSize().x / 2, resolution.height / 2 - window.getSize().y / 2 ));
+	window.setPosition(Vector2i(resolution.width / 2 - window.getSize().x / 2, resolution.height / 2 - window.getSize().y / 2));
 	Clock clock;
 	int dx = 0;
 	bool isRotated = 0;
@@ -351,7 +344,7 @@ int gameWindow()
 			{
 				delay = 0.05;
 			}
-			
+
 
 			// <- Move ->
 			for (int i = 0; i < 4; i++)
