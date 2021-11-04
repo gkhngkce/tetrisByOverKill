@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp> //main library for UI
+#include <SFML/Audio.hpp> // for the music
 #include <time.h> //for timing and randomizing
 #include <iostream> //standart library
 #include <list> //list operations
@@ -295,6 +296,12 @@ int gameWindow()
 	isGameOver = false;
 	int currentTetromino = newTetromino();
 	float timer = 0, delay = 0.5;
+
+	Music music;
+	if (!music.openFromFile("sources/themeA.ogg"))
+		return -1; // error
+	music.play();
+	music.setLoop(true);
 
 	while (window.isOpen())
 	{
