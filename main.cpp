@@ -124,7 +124,7 @@ void showhighScores()
 	}
 	readHighscores.close();
 	cout << '\n' << "Press a key to continue...";
-	getch();
+	_getch();
 }
 
 int loadFonts(Font& font, string path)
@@ -272,6 +272,16 @@ int newTetromino()
 	return currentTetromino;
 }
 
+void clearTable()
+{
+	for (int i = 0; i < fieldRow; i++)
+	{
+		for (int j = 0; j < fieldColumn; j++)
+		{
+			gameField[i][j] = 0;
+		}
+	}
+}
 
 int gameWindow()
 {
@@ -281,6 +291,7 @@ int gameWindow()
 		return -1;
 	}
 	srand(time(0));
+	bool drop = false;
 	RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
 	auto resolution = VideoMode::getDesktopMode();
 	window.setSize({ 480, 720 });
@@ -305,6 +316,10 @@ int gameWindow()
 			{
 				window.close();
 			}
+			if (Keyboard::isKeyPressed(Keyboard::Space))
+			{
+
+			}
 			if (event.type == Event::KeyPressed)
 			{
 				if (event.key.code == Keyboard::Up)
@@ -323,6 +338,11 @@ int gameWindow()
 				{
 					dx = 1;
 				}
+				if (event.key.code == Keyboard::Space)
+				{
+					drop = true;
+					delay = 0;
+				}
 			}
 		}
 		if (!isGameOver)
@@ -331,6 +351,7 @@ int gameWindow()
 			{
 				delay = 0.05;
 			}
+			
 
 			// <- Move ->
 			for (int i = 0; i < 4; i++)
@@ -349,28 +370,53 @@ int gameWindow()
 			//Vertical motion
 			if (timer > delay)
 			{
-				for (int i = 0; i < 4; i++)
+				if (drop)
 				{
-					b[i] = a[i];
-					a[i].y += 1;
-				}
-				if (!collisionDetection())
-				{
-					for (int i = 0; i < 4; i++)
+					while (drop)
 					{
-						gameField[b[i].y][b[i].x] = currentTetromino;
+						for (int i = 0; i < 4; i++)
+						{
+							b[i] = a[i];
+							a[i].y += 1;
+						}
+						if (!collisionDetection())
+						{
+							for (int i = 0; i < 4; i++)
+							{
+								gameField[b[i].y][b[i].x] = currentTetromino;
+							}
+							//Getting the next tetromino from batch
+							currentTetromino = newTetromino();
+							drop = false;
+							delay = 0.3;
+						}
 					}
-					//Getting the next tetromino from batch
-					currentTetromino = newTetromino();
 				}
 				else
 				{
-					for (int i = 0; i < fieldColumn; i++)
+					for (int i = 0; i < 4; i++)
 					{
-						if (gameField[4][i])
+						b[i] = a[i];
+						a[i].y += 1;
+					}
+					if (!collisionDetection())
+					{
+						for (int i = 0; i < 4; i++)
 						{
-							isGameOver = true;
-							break;
+							gameField[b[i].y][b[i].x] = currentTetromino;
+						}
+						//Getting the next tetromino from batch
+						currentTetromino = newTetromino();
+					}
+					else
+					{
+						for (int i = 0; i < fieldColumn; i++)
+						{
+							if (gameField[4][i])
+							{
+								isGameOver = true;
+								break;
+							}
 						}
 					}
 				}
@@ -402,7 +448,6 @@ int gameWindow()
 					totalLinesCleared += linesCleared;
 					scoreLinesCleared += linesCleared;
 				}
-
 			}
 			Scoring(scoreLinesCleared);
 
