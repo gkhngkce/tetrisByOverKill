@@ -282,6 +282,9 @@ int gameWindow()
 	}
 	srand(time(0));
 	RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
+	auto resolution = VideoMode::getDesktopMode();
+	window.setSize({ 480, 720 });
+	window.setPosition(Vector2i(resolution.width / 2 - window.getSize().x / 2, resolution.height / 2 - window.getSize().y / 2 ));
 	Clock clock;
 	int dx = 0;
 	bool isRotated = 0;
@@ -424,6 +427,7 @@ int gameWindow()
 		window.draw(background);
 		window.draw(scoreText);
 		window.draw(totalLinesClearText);
+		//Draw next tetromino to right side
 		for (int i = 0; i < 4; i++)
 		{
 			c[i].x = tetrominos[nextTetromino][i] % 2;
@@ -431,11 +435,11 @@ int gameWindow()
 		}
 		for (int i = 0; i < 4; i++)
 		{
-			nextTetrominoSprite.setPosition((c[i].x * 18) + 250, (c[i].y * 18) + 155);
+			nextTetrominoSprite.setPosition((c[i].x * 18) + 245, (c[i].y * 18) + 152);
 			nextTetrominoSprite.setTextureRect(IntRect((nextTetromino + 1) * 18, 0, 18, 18));
 			window.draw(nextTetrominoSprite);
 		}
-
+		//Draw the actual tetromino to the gamefield
 		for (int i = 0; i < fieldRow; i++)
 		{
 			for (int j = 0; j < fieldColumn; j++)
