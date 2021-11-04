@@ -1,42 +1,38 @@
-#include <SFML/Graphics.hpp>
-#include <time.h>
-#include <iostream>
-#include <list>
-#include <fstream>
-#include <string>
+#include <SFML/Graphics.hpp> //main library for UI
+#include <time.h> //for timing and randomizing
+#include <iostream> //standart library
+#include <list> //list operations
+#include <fstream> //file operations
+#include <conio.h> // for getch() function(waiting an input before exit)
 
 using namespace sf;
 using namespace std;
 
+//Score and related variables
+int score = 0;
+int totalLinesCleared = 0;
+string name;
+bool isGameOver = false;
+
+//Game field variables
+const int fieldRow = 24;
+const int fieldColumn = 10;
+int gameField[fieldRow][fieldColumn] = { 0 };
+
+//Textures of gamefield
+Texture tiles, bground, outFrame;
+Sprite sprite, background, nextTetrominoSprite;
 //Gamoever screen variables
 Text gameOverText, scoreText, totalLinesClearText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
 
-//Score variables
-int score = 0;
-int totalLinesCleared = 0;
-string name;
-
-bool isGameOver = false;
-
-//Game field variables
-const int fieldRow = 24;
-const int fieldColumn = 10;
-
-//Defining the game field
-int gameField[fieldRow][fieldColumn] = { 0 };
-
-//Textures of gamefield
-Texture tiles, bground, outFrame;
-Sprite sprite, background, nextTetrominoSprite;
-
 //Defining the batch of tetrominos
 list <int> tetrominoBatch;
 int nextTetromino = 0;
 
-// ??? point of tetrominos ???
+//points of tetrominos on the screen a=>shown ones b=>hidden ones c=>next tetromino
 struct Point
 {
 	int x, y;
@@ -103,7 +99,8 @@ void Scoring(int linesCleared)
 		cout << score << endl;
 		break;
 	}
-
+	scoreText.setString(to_string(score));
+	totalLinesClearText.setString(to_string(totalLinesCleared));
 }
 
 void highscoreWrite(string nickname)
@@ -116,6 +113,20 @@ void highscoreWrite(string nickname)
 	highscores << savedtext;
 	highscores.close();
 }
+
+void showhighScores()
+{
+	ifstream readHighscores("highscores.txt", ios::in);
+	string l;
+	while (getline(readHighscores, l))
+	{
+		cout << l << endl;
+	}
+	readHighscores.close();
+	cout << '\n' << "Press a key to continue...";
+	getch();
+}
+
 int loadFonts(Font& font, string path)
 {
 	if (!font.loadFromFile(path))
@@ -403,14 +414,16 @@ int gameWindow()
 			}
 		}
 
+		//Reset dependet variables before draw for next cycle
 		dx = 0;
 		isRotated = 0;
 		delay = 0.3;
 
-
 		//Drawing to the screen
 		window.clear(Color::White);
 		window.draw(background);
+		window.draw(scoreText);
+		window.draw(totalLinesClearText);
 		for (int i = 0; i < 4; i++)
 		{
 			c[i].x = tetrominos[nextTetromino][i] % 2;
@@ -422,11 +435,6 @@ int gameWindow()
 			nextTetrominoSprite.setTextureRect(IntRect((nextTetromino + 1) * 18, 0, 18, 18));
 			window.draw(nextTetrominoSprite);
 		}
-
-		scoreText.setString(to_string(score));
-		totalLinesClearText.setString(to_string(totalLinesCleared));
-		window.draw(scoreText);
-		window.draw(totalLinesClearText);
 
 		for (int i = 0; i < fieldRow; i++)
 		{
@@ -476,19 +484,14 @@ int main()
 	}
 	if (choice == 3)
 	{
-		ifstream readHighscores("highscores.txt", ios::in);
-		string l;
-		while (getline(readHighscores, l))
-		{
-			cout << l << endl;
-		}
-		readHighscores.close();
+		showhighScores();
 	}
 	if (isGameOver)
 	{
 		cout << "Input name: ";
 		cin >> name;
 		highscoreWrite(name);
+		showhighScores();
 	}
 	return 0;
 }
