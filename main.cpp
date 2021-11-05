@@ -37,14 +37,14 @@ int nextTetromino = 0;
 struct Point
 {
 	int x, y;
-} a[4], b[4], c[4];
+} currentTetrominosPosition[4], tetrominosFieldPosition[4], nextTetrominosPosition[4];
 
 //Defining tetrominos
 int tetrominos[7][4] =
 {
 	3,5,4,7, // T - 0
-	2,4,5,7, // S - 1
-	3,5,4,6, // Z - 2
+	3,5,4,6, // Z - 1
+	2,4,5,7, // S - 2
 	2,3,4,5, // O - 3
 	1,3,5,7, // I - 4
 	2,3,5,7, // L - 5
@@ -194,11 +194,11 @@ bool collisionDetection()
 {
 	for (int i = 0; i < 4; i++)
 	{
-		if (a[i].x < 0 || a[i].x >= fieldColumn || a[i].y >= fieldRow)
+		if (currentTetrominosPosition[i].x < 0 || currentTetrominosPosition[i].x >= fieldColumn || currentTetrominosPosition[i].y >= fieldRow)
 		{
 			return 0;
 		}
-		else if (gameField[a[i].y][a[i].x])
+		else if (gameField[currentTetrominosPosition[i].y][currentTetrominosPosition[i].x])
 		{
 			return 0;
 		}
@@ -206,34 +206,34 @@ bool collisionDetection()
 	return 1;
 };
 
-int rotate(int currTetromino)
+int rotate(int currTetromino, Point *pointOfCurrent)
 {
 	if (currTetromino != 4)
 	{
-		Point centerOfRotation = a[1]; //center of rotation
+		Point centerOfRotation = pointOfCurrent[1]; //center of rotation
 		for (int i = 0; i < 4; i++)
 		{
-			int x = a[i].y - centerOfRotation.y;
-			int y = a[i].x - centerOfRotation.x;
-			a[i].x = centerOfRotation.x - x;
-			a[i].y = centerOfRotation.y + y;
+			int x = pointOfCurrent[i].y - centerOfRotation.y;
+			int y = pointOfCurrent[i].x - centerOfRotation.x;
+			pointOfCurrent[i].x = centerOfRotation.x - x;
+			pointOfCurrent[i].y = centerOfRotation.y + y;
 		}
 		if (!collisionDetection())
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				a[i] = b[i];
+				currentTetrominosPosition[i] = tetrominosFieldPosition[i];
 			}
 		}
 	}
 	return 0;
 }
 
-int counterRotate(int currTetromino)
+int counterRotate(int currTetromino, Point *pointOfCurrent)
 {
-	rotate(currTetromino);
-	rotate(currTetromino);
-	rotate(currTetromino);
+	rotate(currTetromino, pointOfCurrent);
+	rotate(currTetromino, pointOfCurrent);
+	rotate(currTetromino, pointOfCurrent);
 	return 0;
 }
 
@@ -261,12 +261,12 @@ int newTetromino()
 	int currentTetromino = createdTetromino + 1;
 	for (int i = 0; i < 4; i++)
 	{
-		a[i].x = (tetrominos[createdTetromino][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
-		a[i].y = tetrominos[createdTetromino][i] / 2; //defining y coordinate of tetromino
+		currentTetrominosPosition[i].x = (tetrominos[createdTetromino][i] % 2) + (fieldColumn / 2) - 1;//defining x coordinate of tetromino & centeralizing the tetromino
+		currentTetrominosPosition[i].y = tetrominos[createdTetromino][i] / 2; //defining y coordinate of tetromino
 	}
-	if (currentTetromino != 4 && currentTetromino != 5)
+	if (currentTetromino != 4)
 	{
-		rotate(currentTetromino);
+		rotate(currentTetromino, currentTetrominosPosition);
 	}
 	if (tetrominoBatch.empty())
 	{
@@ -317,32 +317,39 @@ int gameWindow()
 			{
 				window.close();
 			}
-			if (Keyboard::isKeyPressed(Keyboard::Space))
-			{
-
-			}
 			if (event.type == Event::KeyPressed)
 			{
 				if (event.key.code == Keyboard::Up)
 				{
-					rotate(currentTetromino);
+					if (!isGameOver)
+					{
+						rotate(currentTetromino, currentTetrominosPosition);
+						clock.restart();
+					}
 				}
 				if (event.key.code == Keyboard::Z)
 				{
-					counterRotate(currentTetromino);
+					if (!isGameOver)
+					{
+						counterRotate(currentTetromino, currentTetrominosPosition);
+						clock.restart();
+					}
 				}
 				if (event.key.code == Keyboard::Left)
 				{
 					dx = -1;
+					clock.restart();
 				}
 				if (event.key.code == Keyboard::Right)
 				{
 					dx = 1;
+					clock.restart();
 				}
 				if (event.key.code == Keyboard::Space)
 				{
 					drop = true;
 					delay = 0;
+					clock.restart();
 				}
 			}
 		}
@@ -357,14 +364,14 @@ int gameWindow()
 			// <- Move ->
 			for (int i = 0; i < 4; i++)
 			{
-				b[i] = a[i];
-				a[i].x += dx;
+				tetrominosFieldPosition[i] = currentTetrominosPosition[i];
+				currentTetrominosPosition[i].x += dx;
 			}
 			if (!collisionDetection())
 			{
 				for (int i = 0; i < 4; i++)
 				{
-					a[i] = b[i];
+					currentTetrominosPosition[i] = tetrominosFieldPosition[i];
 				}
 			}
 
@@ -377,14 +384,14 @@ int gameWindow()
 					{
 						for (int i = 0; i < 4; i++)
 						{
-							b[i] = a[i];
-							a[i].y += 1;
+							tetrominosFieldPosition[i] = currentTetrominosPosition[i];
+							currentTetrominosPosition[i].y += 1;
 						}
 						if (!collisionDetection())
 						{
 							for (int i = 0; i < 4; i++)
 							{
-								gameField[b[i].y][b[i].x] = currentTetromino;
+								gameField[tetrominosFieldPosition[i].y][tetrominosFieldPosition[i].x] = currentTetromino;
 							}
 							//Getting the next tetromino from batch
 							currentTetromino = newTetromino();
@@ -397,14 +404,14 @@ int gameWindow()
 				{
 					for (int i = 0; i < 4; i++)
 					{
-						b[i] = a[i];
-						a[i].y += 1;
+						tetrominosFieldPosition[i] = currentTetrominosPosition[i];
+						currentTetrominosPosition[i].y += 1;
 					}
 					if (!collisionDetection())
 					{
 						for (int i = 0; i < 4; i++)
 						{
-							gameField[b[i].y][b[i].x] = currentTetromino;
+							gameField[tetrominosFieldPosition[i].y][tetrominosFieldPosition[i].x] = currentTetromino;
 						}
 						//Getting the next tetromino from batch
 						currentTetromino = newTetromino();
@@ -476,15 +483,17 @@ int gameWindow()
 		//Draw next tetromino to right side
 		for (int i = 0; i < 4; i++)
 		{
-			c[i].x = tetrominos[nextTetromino][i] % 2;
-			c[i].y = tetrominos[nextTetromino][i] / 2;
+			nextTetrominosPosition[i].x = tetrominos[nextTetromino][i] % 2;
+			nextTetrominosPosition[i].y = tetrominos[nextTetromino][i] / 2;
 		}
+		rotate((nextTetromino+1), nextTetrominosPosition);
 		for (int i = 0; i < 4; i++)
 		{
-			nextTetrominoSprite.setPosition((c[i].x * 18) + 245, (c[i].y * 18) + 152);
+			nextTetrominoSprite.setPosition((nextTetrominosPosition[i].x * 18) + 245, (nextTetrominosPosition[i].y * 18) + 152);
 			nextTetrominoSprite.setTextureRect(IntRect((nextTetromino + 1) * 18, 0, 18, 18));
 			window.draw(nextTetrominoSprite);
 		}
+		
 		//Draw the actual tetromino to the gamefield
 		for (int i = 0; i < fieldRow; i++)
 		{
@@ -503,7 +512,7 @@ int gameWindow()
 		for (int i = 0; i < 4; i++)
 		{
 			sprite.setTextureRect(IntRect(currentTetromino * 18, 0, 18, 18));
-			sprite.setPosition(a[i].x * 18, a[i].y * 18);
+			sprite.setPosition(currentTetrominosPosition[i].x * 18, currentTetrominosPosition[i].y * 18);
 			sprite.move(28, 31); //offset
 			window.draw(sprite);
 		}
