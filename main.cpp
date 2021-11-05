@@ -300,6 +300,7 @@ int gameWindow()
 	Music music;
 	if (!music.openFromFile("sources/themeA.ogg"))
 		return -1; // error
+	music.setVolume(10.f);
 	music.play();
 	music.setLoop(true);
 
