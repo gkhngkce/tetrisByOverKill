@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp> //main library for UI
-#include <SFML/Audio.hpp> // for the music
 #include <time.h> //for timing and randomizing
 #include <iostream> //standart library
 #include <list> //list operations
@@ -10,10 +9,10 @@ using namespace sf;
 using namespace std;
 
 //Score and related variables
-int score = 0;
-int totalLinesCleared = 0;
+int score = 0, totalLinesCleared = 0;
 string name;
 bool isGameOver = false;
+const int menuItemCount = 4;
 
 //Game field variables
 const int fieldRow = 24;
@@ -24,10 +23,12 @@ int gameField[fieldRow][fieldColumn] = { 0 };
 Texture tiles, bground, outFrame;
 Sprite sprite, background, nextTetrominoSprite;
 //Gamoever screen variables
+Text menuItems[menuItemCount];
 Text gameOverText, scoreText, totalLinesClearText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
+RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
 
 //Defining the batch of tetrominos
 list <int> tetrominoBatch;
@@ -155,6 +156,11 @@ int initialize()
 	background.setTexture(bground);
 	nextTetrominoSprite.setTexture(tiles);
 
+	int columnSize = window.getSize().y / (menuItemCount+5);
+	auto resolution = VideoMode::getDesktopMode();
+	window.setSize({ 480, 720 });
+	window.setPosition(Vector2i(resolution.width / 2 - window.getSize().x / 2, resolution.height / 2 - window.getSize().y / 2));
+
 	//Message for game over
 	gameOverText.setPosition({ 320 / 2, 480 / 2 });
 	gameOverText.setFont(gameOverFont);
@@ -186,6 +192,16 @@ int initialize()
 	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
 		gameOverTextRect.top + gameOverTextRect.height / 2.0f);
+
+	
+	for (int i = 0; i < menuItemCount; i++)
+	{
+		menuItems[i].setPosition(((window.getSize().x)/5), (columnSize*(i+1)));
+		menuItems[i].setFont(gameOverFont);
+		menuItems[i].setCharacterSize(20);
+		menuItems[i].setFillColor(Color::Black);
+	}
+
 	return 0;
 }
 
@@ -277,31 +293,50 @@ int newTetromino()
 	return currentTetromino;
 }
 
+int mainMenu()
+{
+	Event event;
+	while (window.isOpen())
+	{
+		while (window.pollEvent(event))
+		{
+			if (event.type == Event::Closed)
+			{
+				window.close();
+			}
+		}
+		//initialize game resources if there is a problem do not run game
+		if (initialize() != 0)
+		{
+			return -1;
+		}
+		window.clear(Color::White);
+		menuItems[0].setString("New Game");
+		menuItems[1].setString("High Scores");
+		menuItems[2].setString("Settings");
+		menuItems[3].setString("Exit");
+
+		for (int i = 0; i < menuItemCount; i++)
+		{
+			window.draw(menuItems[i]);
+		}
+		window.display();
+	}
+	return 0;
+}
+
+
+
 int gameWindow()
 {
-	//initialize game resources if there is a problem do not run game
-	if (initialize() != 0)
-	{
-		return -1;
-	}
 	srand(time(0));
 	bool drop = false;
-	RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
-	auto resolution = VideoMode::getDesktopMode();
-	window.setSize({ 480, 720 });
-	window.setPosition(Vector2i(resolution.width / 2 - window.getSize().x / 2, resolution.height / 2 - window.getSize().y / 2));
 	Clock clock;
 	int dx = 0;
 	bool isRotated = 0;
 	isGameOver = false;
 	int currentTetromino = newTetromino();
 	float timer = 0, delay = 0.5;
-
-	Music music;
-	if (!music.openFromFile("sources/themeA.ogg"))
-		return -1; // error
-	music.play();
-	music.setLoop(true);
 
 	while (window.isOpen())
 	{
@@ -315,10 +350,6 @@ int gameWindow()
 			if (event.type == Event::Closed)
 			{
 				window.close();
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Space))
-			{
-
 			}
 			if (event.type == Event::KeyPressed)
 			{
@@ -518,29 +549,30 @@ int gameWindow()
 
 int main()
 {
-	int choice;
-	cout << "\n\n\t\t\t\tWelcome to the Tetris by the team OverKill\n\n\n\n\n\n";
-	cout << "\t\t\t\t\t1- Start Game\n\n";
-	cout << "\t\t\t\t\t2- Exit\n\n";
-	cout << "\t\t\t\t\t3- High Scores(Feature)\n\n";
+	//int choice;
+	//cout << "\n\n\t\t\t\tWelcome to the Tetris by the team OverKill\n\n\n\n\n\n";
+	//cout << "\t\t\t\t\t1- Start Game\n\n";
+	//cout << "\t\t\t\t\t2- Exit\n\n";
+	//cout << "\t\t\t\t\t3- High Scores(Feature)\n\n";
 
-	cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour choice? :";
-	cin >> choice;
+	//cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour choice? :";
+	//cin >> choice;
 
-	if (choice == 1)
-	{
-		gameWindow();
-	}
-	if (choice == 3)
-	{
-		showhighScores();
-	}
-	if (isGameOver)
-	{
-		cout << "Input name: ";
-		cin >> name;
-		highscoreWrite(name);
-		showhighScores();
-	}
+	//if (choice == 1)
+	//{
+	//	gameWindow();
+	//}
+	//if (choice == 3)
+	//{
+	//	showhighScores();
+	//}
+	//if (isGameOver)
+	//{
+	//	cout << "Input name: ";
+	//	cin >> name;
+	//	highscoreWrite(name);
+	//	showhighScores();
+	//}
+	mainMenu();
 	return 0;
 }
