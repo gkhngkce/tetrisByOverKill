@@ -18,6 +18,8 @@ bool isGameOver = false;
 //Game field variables
 const int fieldRow = 24;
 const int fieldColumn = 10;
+const int playWidth = 320;
+const int playHeight = 480;
 int gameField[fieldRow][fieldColumn] = { 0 };
 
 //Textures of gamefield
@@ -156,7 +158,7 @@ int initialize()
 	nextTetrominoSprite.setTexture(tiles);
 
 	//Message for game over
-	gameOverText.setPosition({ 320 / 2, 480 / 2 });
+	gameOverText.setPosition({ playWidth / 2, playHeight / 2 });
 	gameOverText.setFont(gameOverFont);
 	gameOverText.setCharacterSize(40);
 	gameOverText.setFillColor(Color::Green);
@@ -183,7 +185,7 @@ int initialize()
 	//Text background
 	textBackgroundRect = RectangleShape{ Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
 	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
-	textBackgroundRect.setPosition({ 320 / 2, 480 / 2 });
+	textBackgroundRect.setPosition({ playWidth / 2, playHeight / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
 		gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 	return 0;
@@ -206,7 +208,7 @@ bool collisionDetection()
 	return 1;
 };
 
-int rotate(int currTetromino, Point *pointOfCurrent)
+int rotate(int currTetromino, Point* pointOfCurrent)
 {
 	if (currTetromino != 4)
 	{
@@ -229,7 +231,7 @@ int rotate(int currTetromino, Point *pointOfCurrent)
 	return 0;
 }
 
-int counterRotate(int currTetromino, Point *pointOfCurrent)
+int counterRotate(int currTetromino, Point* pointOfCurrent)
 {
 	rotate(currTetromino, pointOfCurrent);
 	rotate(currTetromino, pointOfCurrent);
@@ -286,7 +288,7 @@ int gameWindow()
 	}
 	srand(time(0));
 	bool drop = false;
-	RenderWindow window(VideoMode(320, 480), "Tetris By Overkill!");
+	RenderWindow window(VideoMode(playWidth, playHeight), "Tetris By Overkill!");
 	auto resolution = VideoMode::getDesktopMode();
 	window.setSize({ 480, 720 });
 	window.setPosition(Vector2i(resolution.width / 2 - window.getSize().x / 2, resolution.height / 2 - window.getSize().y / 2));
@@ -486,14 +488,14 @@ int gameWindow()
 			nextTetrominosPosition[i].x = tetrominos[nextTetromino][i] % 2;
 			nextTetrominosPosition[i].y = tetrominos[nextTetromino][i] / 2;
 		}
-		rotate((nextTetromino+1), nextTetrominosPosition);
+		rotate((nextTetromino + 1), nextTetrominosPosition);
 		for (int i = 0; i < 4; i++)
 		{
 			nextTetrominoSprite.setPosition((nextTetrominosPosition[i].x * 18) + 245, (nextTetrominosPosition[i].y * 18) + 152);
 			nextTetrominoSprite.setTextureRect(IntRect((nextTetromino + 1) * 18, 0, 18, 18));
 			window.draw(nextTetrominoSprite);
 		}
-		
+
 		//Draw the actual tetromino to the gamefield
 		for (int i = 0; i < fieldRow; i++)
 		{
