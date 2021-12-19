@@ -6,13 +6,16 @@
 #include <fstream> //file operations
 #include <conio.h> // for getch() function(waiting an input before exit)
 
+
+int mainMenuWindow();
+
 using namespace sf;
 using namespace std;
 
 //Score and related variables
 int score = 0;
 int totalLinesCleared = 0;
-string name;
+string name="Name = ";
 bool isGameOver = false;
 
 //Game field variables
@@ -28,7 +31,7 @@ Sprite sprite, background, nextTetrominoSprite;
 string bgPath = "sources/menuScreen.png";
 string tilePath = "sources/tilesDeniz.png";
 //Gamoever screen variables
-Text gameOverText, scoreText, totalLinesClearText,highScores;
+Text gameOverText, scoreText, totalLinesClearText,highScoresText,restartText,nameText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
@@ -36,6 +39,98 @@ Font gameOverFont;
 //Defining the batch of tetrominos
 list <int> tetrominoBatch;
 int nextTetromino = 0;
+
+string fromKtoS(Keyboard::Key k) {
+	string ret;
+	switch (k) {
+
+	case sf::Keyboard::A:
+		ret = "A";
+		break;
+	case sf::Keyboard::B:
+		ret = "B";
+		break;
+	case sf::Keyboard::C:
+		ret = "C";
+		break;
+	case sf::Keyboard::D:
+		ret = "D";
+		break;
+	case sf::Keyboard::E:
+		ret = "E";
+		break;
+	case sf::Keyboard::F:
+		ret = "F";
+		break;
+	case sf::Keyboard::G:
+		ret = "G";
+		break;
+	case sf::Keyboard::H:
+		ret = "H";
+		break;
+	case sf::Keyboard::I:
+		ret = "I";
+		break;
+	case sf::Keyboard::J:
+		ret = "J";
+		break;
+	case sf::Keyboard::K:
+		ret = "K";
+		break;
+	case sf::Keyboard::L:
+		ret = "L";
+		break;
+	case sf::Keyboard::M:
+		ret = "M";
+		break;
+	case sf::Keyboard::N:
+		ret = "N";
+		break;
+	case sf::Keyboard::O:
+		ret = "O";
+		break;
+	case sf::Keyboard::P:
+		ret = "P";
+		break;
+	case sf::Keyboard::Q:
+		ret = "Q";
+		break;
+	case sf::Keyboard::R:
+		ret = "R";
+		break;
+	case sf::Keyboard::S:
+		ret = "S";
+		break;
+	case sf::Keyboard::T:
+		ret = "T";
+		break;
+	case sf::Keyboard::U:
+		ret = "U";
+		break;
+	case sf::Keyboard::V:
+		ret = "V";
+		break;
+	case sf::Keyboard::W:
+		ret = "W";
+		break;
+	case sf::Keyboard::X:
+		ret = "X";
+		break;
+	case sf::Keyboard::Y:
+		ret = "Y";
+		break;
+	case sf::Keyboard::Z:
+		ret = "Z";
+		break;
+	case sf::Keyboard::BackSpace:
+		ret = "BACK";
+		break;
+	default:
+		ret = "UNK";
+		break;
+	}
+	return ret;
+}
 
 //points of tetrominos on the screen a=>shown ones b=>hidden ones c=>next tetromino
 struct Point
@@ -123,17 +218,21 @@ void highscoreWrite(string nickname)
 	highscores.close();
 }
 
-void showhighScores()
+void showHighScores()
 {
 	ifstream readHighscores("highscores.txt", ios::in);
-	string l;
+	string l, scores = "";
 	while (getline(readHighscores, l))
 	{
-		cout << l << endl;
+		l.replace(l.find("Highscore ="), 12, "");
+		l.replace(l.find("Total"), 19, "TLC");
+		scores.append(l);
+		scores.append("\n");
+		highScoresText.setString(scores);
 	}
 	readHighscores.close();
-	cout << '\n' << "Press a key to continue...";
-	_getch();
+	scores.append("\nESC for main menu");
+	highScoresText.setString(scores);
 }
 
 int loadFonts(Font& font, string path)
@@ -166,12 +265,26 @@ int initialize()
 	gameOverText.setFillColor(Color::Green);
 	gameOverText.setString(" Game Over ");
 
-	//Message for game over
-	highScores.setPosition({ playWidth / 10, playHeight / 10 });
-	highScores.setFont(gameOverFont);
-	highScores.setCharacterSize(15);
-	highScores.setFillColor(Color::Black);
-	highScores.setString("");
+	//Message for restart game
+	restartText.setPosition({ playWidth / 10, (playHeight / 2)+15 });
+	restartText.setFont(gameOverFont);
+	restartText.setCharacterSize(10);
+	restartText.setFillColor(Color::Green);
+	restartText.setString("Hit SHIFT for restart, ESC for main menu");
+
+	//Message for getting name from user
+	nameText.setPosition({ playWidth / 10, (playHeight / 2) + 30 });
+	nameText.setFont(gameOverFont);
+	nameText.setCharacterSize(10);
+	nameText.setFillColor(Color::Green);
+	nameText.setString(name);
+
+	//Message for showing high scores
+	highScoresText.setPosition({ playWidth / 10, playHeight / 10 });
+	highScoresText.setFont(gameOverFont);
+	highScoresText.setCharacterSize(15);
+	highScoresText.setFillColor(Color::Black);
+	highScoresText.setString("");
 
 	//Score text on the right sight
 	scoreText.setPosition(225, 287);
@@ -192,7 +305,7 @@ int initialize()
 	gameOverText.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f, gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
 	//Text background
-	textBackgroundRect = RectangleShape{ Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 30 } };
+	textBackgroundRect = RectangleShape{ Vector2f{ gameOverTextRect.width + 10, gameOverTextRect.height + 60 } };
 	textBackgroundRect.setFillColor(sf::Color(0, 0, 0, 200));
 	textBackgroundRect.setPosition({ playWidth / 2, playHeight / 2 });
 	textBackgroundRect.setOrigin(gameOverTextRect.left + gameOverTextRect.width / 2.0f,
@@ -366,6 +479,51 @@ int gameWindow()
 					delay = 0;
 					clock.restart();
 				}
+				if (event.key.code == Keyboard::Enter)
+				{
+					if (isGameOver)
+					{
+						if (name.length() > 7)
+						{
+							highscoreWrite(name.replace(0, 6, ""));
+						}
+						name += " Score Saved.";
+						nameText.setString(name);
+					}
+				}
+				if (event.key.code == Keyboard::Escape)
+				{
+					if (isGameOver)
+					{
+						music.stop();
+						bgPath = "sources/menuScreen.png";
+						window.close();
+						mainMenuWindow();
+					}
+				}
+				if (event.key.code == Keyboard::RShift || event.key.code == Keyboard::LShift)
+				{
+					//Restart...
+				}
+				else
+				{
+					if (isGameOver)
+					{
+						string res= fromKtoS(event.key.code);
+						if (res.compare("BACK") == 0)
+						{
+							if (name.length() > 6)
+							{
+								name = name.replace(name.length() - 1, 1, "");
+							}
+						}
+						else if (res.compare("UNK")!=0)
+						{
+							name += res;
+						}
+						nameText.setString(name);
+					}
+				}
 			}
 		}
 		if (!isGameOver)
@@ -535,6 +693,8 @@ int gameWindow()
 		{
 			window.draw(textBackgroundRect);
 			window.draw(gameOverText);
+			window.draw(restartText);
+			window.draw(nameText);
 		}
 		window.display();
 	}
@@ -580,17 +740,7 @@ int mainMenuWindow()
 					showScores = true;
 					bground = Texture();
 					background.setTexture(bground);
-					ifstream readHighscores("highscores.txt", ios::in);
-					string l,scores="";
-					while (getline(readHighscores, l))
-					{
-						l.replace(l.find("Highscore ="), 12, "");
-						l.replace(l.find("Total"), 19, "TLC");
-						scores.append(l);
-						scores.append("\n");
-						highScores.setString(scores);
-					}
-					readHighscores.close();
+					showHighScores();
 				}
 				if (event.key.code == Keyboard::Num4)
 				{
@@ -610,6 +760,15 @@ int mainMenuWindow()
 					loadTextures(bground, "sources/menuScreen.png");
 					background.setTexture(bground);
 				}
+				if (event.key.code == Keyboard::Escape)
+				{
+					if (showScores)
+					{
+						showScores = false;
+						loadTextures(bground, "sources/menuScreen.png");
+						background.setTexture(bground);
+					}
+				}
 			}
 		}
 		//Drawing to the screen
@@ -617,7 +776,7 @@ int mainMenuWindow()
 		window.draw(background);
 		if (showScores)
 		{
-			window.draw(highScores);
+			window.draw(highScoresText);
 		}
 		window.display();
 	}
