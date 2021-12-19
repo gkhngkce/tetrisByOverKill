@@ -25,8 +25,10 @@ int gameField[fieldRow][fieldColumn] = { 0 };
 //Textures of gamefield
 Texture tiles, bground, outFrame;
 Sprite sprite, background, nextTetrominoSprite;
+string bgPath = "sources/menuScreen.png";
+string tilePath = "sources/tilesDeniz.png";
 //Gamoever screen variables
-Text gameOverText, scoreText, totalLinesClearText;
+Text gameOverText, scoreText, totalLinesClearText,highScores;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
@@ -149,7 +151,7 @@ int loadFonts(Font& font, string path)
 
 int initialize()
 {
-	if (loadFonts(gameOverFont, "sources/sansation.ttf") != 0 || loadTextures(tiles, "sources/tiles.png") != 0 || loadTextures(bground, "sources/background.png") != 0)
+	if (loadFonts(gameOverFont, "sources/sansation.ttf") != 0 || loadTextures(tiles, tilePath) != 0 || loadTextures(bground, bgPath) != 0)
 	{
 		return -1;
 	}
@@ -163,6 +165,13 @@ int initialize()
 	gameOverText.setCharacterSize(40);
 	gameOverText.setFillColor(Color::Green);
 	gameOverText.setString(" Game Over ");
+
+	//Message for game over
+	highScores.setPosition({ playWidth / 10, playHeight / 10 });
+	highScores.setFont(gameOverFont);
+	highScores.setCharacterSize(15);
+	highScores.setFillColor(Color::Black);
+	highScores.setString("");
 
 	//Score text on the right sight
 	scoreText.setPosition(225, 287);
@@ -286,6 +295,10 @@ int gameWindow()
 	{
 		return -1;
 	}
+	loadTextures(bground, bgPath);
+	background.setTexture(bground);
+	loadTextures(tiles, tilePath);
+	sprite.setTexture(tiles);
 	srand(time(0));
 	bool drop = false;
 	RenderWindow window(VideoMode(playWidth, playHeight), "Tetris By Overkill!");
@@ -528,31 +541,90 @@ int gameWindow()
 	return 0;
 }
 
+int mainMenuWindow()
+{
+	if (initialize() != 0)
+	{
+		return -1;
+	}
+	bool showScores = false;
+	bgPath = "sources/themeDeniz.png";
+	RenderWindow window(VideoMode(playWidth, playHeight), "Tetris By Overkill!");
+	auto resolution = VideoMode::getDesktopMode();
+	window.setSize({ 480, 720 });
+	window.setPosition(Vector2i(resolution.width / 2 - window.getSize().x / 2, resolution.height / 2 - window.getSize().y / 2));
+	while (window.isOpen())
+	{
+		Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == Event::Closed)
+			{
+				window.close();
+			}
+			if (event.type == Event::KeyPressed)
+			{
+				if (event.key.code == Keyboard::Num1)
+				{
+					//bgPath = "sources/background.png";
+					window.close();
+					gameWindow();
+				}
+				if (event.key.code == Keyboard::Num2)
+				{
+					loadTextures(bground, "sources/settings.png");
+					background.setTexture(bground);
+				}
+				if (event.key.code == Keyboard::Num3)
+				{
+					showScores = true;
+					bground = Texture();
+					background.setTexture(bground);
+					ifstream readHighscores("highscores.txt", ios::in);
+					string l,scores="";
+					while (getline(readHighscores, l))
+					{
+						l.replace(l.find("Highscore ="), 12, "");
+						l.replace(l.find("Total"), 19, "TLC");
+						scores.append(l);
+						scores.append("\n");
+						highScores.setString(scores);
+					}
+					readHighscores.close();
+				}
+				if (event.key.code == Keyboard::Num4)
+				{
+
+				}
+				if (event.key.code == Keyboard::X)
+				{
+					bgPath = "sources/themeDeniz.png";
+					tilePath = "sources/tilesDeniz.png";
+					loadTextures(bground, "sources/menuScreen.png");
+					background.setTexture(bground);
+				}
+				if (event.key.code == Keyboard::Y)
+				{
+					bgPath = "sources/themeOruchan.png";
+					tilePath = "sources/tilesOruchan.png";
+					loadTextures(bground, "sources/menuScreen.png");
+					background.setTexture(bground);
+				}
+			}
+		}
+		//Drawing to the screen
+		window.clear(Color::White);
+		window.draw(background);
+		if (showScores)
+		{
+			window.draw(highScores);
+		}
+		window.display();
+	}
+}
+
 int main()
 {
-	int choice;
-	cout << "\n\n\t\t\t\tWelcome to the Tetris by the team OverKill\n\n\n\n\n\n";
-	cout << "\t\t\t\t\t1- Start Game\n\n";
-	cout << "\t\t\t\t\t2- Exit\n\n";
-	cout << "\t\t\t\t\t3- High Scores(Feature)\n\n";
-
-	cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\nYour choice? :";
-	cin >> choice;
-
-	if (choice == 1)
-	{
-		gameWindow();
-	}
-	if (choice == 3)
-	{
-		showhighScores();
-	}
-	if (isGameOver)
-	{
-		cout << "Input name: ";
-		cin >> name;
-		highscoreWrite(name);
-		showhighScores();
-	}
+	mainMenuWindow();
 	return 0;
 }
