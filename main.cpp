@@ -448,7 +448,7 @@ int gameWindow()
 	Music music;
 	if (!music.openFromFile("sources/themeA.ogg"))
 		return -1; // error
-	music.setVolume(10.f);
+	music.setVolume(5.f); // 100 is default this is a percentage value 0 is mute anything above 50 is not recommended.
 	music.play();
 	music.setLoop(true);
 
