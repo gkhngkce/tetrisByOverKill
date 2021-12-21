@@ -16,7 +16,8 @@ using namespace std;
 int score = 0;
 int totalLinesCleared = 0;
 string name="Name = ";
-bool isGameOver = false;
+bool isGameOver = false; 
+bool isScoreSaved = false;
 
 //Game field variables
 const int fieldRow = 24;
@@ -270,7 +271,7 @@ int initialize()
 	restartText.setFont(gameOverFont);
 	restartText.setCharacterSize(10);
 	restartText.setFillColor(Color::Green);
-	restartText.setString("Hit SHIFT for restart, ESC for main menu");
+	restartText.setString("Hit ENTER for restart, ESC for main menu");
 
 	//Message for getting name from user
 	nameText.setPosition({ playWidth / 10, (playHeight / 2) + 30 });
@@ -401,6 +402,25 @@ int newTetromino()
 	return currentTetromino;
 }
 
+void clearGameField()
+{
+	for (int i = 0; i < fieldRow; i++)
+	{
+		for (int j = 0; j < fieldColumn; j++)
+		{
+			gameField[i][j] = 0;
+		}
+	}
+	totalLinesCleared = 0;
+	score = 0;
+	name = "Name =";
+	nameText.setString(name);
+	isScoreSaved = false;
+	isGameOver = false;
+	createTetrominoBatch();
+	newTetromino();
+}
+
 int gameWindow()
 {
 	//initialize game resources if there is a problem do not run game
@@ -424,7 +444,7 @@ int gameWindow()
 	isGameOver = false;
 	int currentTetromino = newTetromino();
 	float timer = 0, delay = 0.5;
-
+	clearGameField();
 	Music music;
 	if (!music.openFromFile("sources/themeA.ogg"))
 		return -1; // error
@@ -483,12 +503,17 @@ int gameWindow()
 				{
 					if (isGameOver)
 					{
-						if (name.length() > 7)
+						if (name.length() > 7 && name.length()<17 && !isScoreSaved)
 						{
 							highscoreWrite(name.replace(0, 6, ""));
+							name += " Score Saved.";
+							nameText.setString(name);
+							isScoreSaved = true;
 						}
-						name += " Score Saved.";
-						nameText.setString(name);
+						else if (isScoreSaved)
+						{
+							clearGameField();
+						}
 					}
 				}
 				if (event.key.code == Keyboard::Escape)
@@ -499,6 +524,7 @@ int gameWindow()
 						bgPath = "sources/menuScreen.png";
 						window.close();
 						mainMenuWindow();
+						
 					}
 				}
 				if (event.key.code == Keyboard::RShift || event.key.code == Keyboard::LShift)
@@ -517,7 +543,7 @@ int gameWindow()
 								name = name.replace(name.length() - 1, 1, "");
 							}
 						}
-						else if (res.compare("UNK")!=0)
+						else if (res.compare("UNK")!=0 && name.length()<17)
 						{
 							name += res;
 						}
