@@ -5,15 +5,17 @@
 #include <list> //list operations
 #include <fstream> //file operations
 #include <conio.h> // for getch() function(waiting an input before exit)
-
-
-int mainMenuWindow();
+#include <string>
+#include <regex>
 
 using namespace sf;
 using namespace std;
 
+int mainMenuWindow();
+
 //Score and related variables
 int score = 0;
+int scoreList[100];
 int totalLinesCleared = 0;
 string name="Name = ";
 bool isGameOver = false; 
@@ -40,6 +42,11 @@ Font gameOverFont;
 //Defining the batch of tetrominos
 list <int> tetrominoBatch;
 int nextTetromino = 0;
+
+vector<string> split(const string str, const regex regex_str)
+{
+	return{ sregex_token_iterator(str.begin(), str.end(), (regex_str), -1), sregex_token_iterator() };
+}
 
 string fromKtoS(Keyboard::Key k) {
 	string ret;
@@ -214,7 +221,7 @@ void highscoreWrite(string nickname)
 	string savedtext;
 	string strScore = to_string(score);
 	string strLinesCleared = to_string(totalLinesCleared);
-	savedtext = name + ": Highscore = " + strScore + ", Total lines cleared = " + strLinesCleared + "\n";
+	savedtext = name + ":" + strScore + ":" + strLinesCleared + "\n";
 	highscores << savedtext;
 	highscores.close();
 }
@@ -223,14 +230,48 @@ void showHighScores()
 {
 	ifstream readHighscores("highscores.txt", ios::in);
 	string l, scores = "";
+	string sortedScores[100][3];
+	int i = 0,j=0,n=100;
+	for (auto& val : scoreList) val = 0;
 	while (getline(readHighscores, l))
 	{
-		l.replace(l.find("Highscore ="), 12, "");
-		l.replace(l.find("Total"), 19, "TLC");
-		scores.append(l);
-		scores.append("\n");
-		highScoresText.setString(scores);
+		vector<string> hs = split(l, regex(":"));
+		sortedScores[i][0] = hs[0];
+		sortedScores[i][1] = hs[1];
+		scoreList[i] = stoi(hs[1]);
+		sortedScores[i][2] = hs[2];
+		i++;
 	}
+	for (i = 0; i < n - 1; i++)
+	{
+		for (j = 0; j < n - i - 1; j++)
+		{
+			if (scoreList[j] < scoreList[j + 1])
+			{
+				int temp = scoreList[j];
+				scoreList[j] = scoreList[j+1];
+				scoreList[j + 1] = temp;
+				string templ[3];
+				for (int ii = 0; ii < 3; ++ii) {
+					templ[ii] = sortedScores[j+1][ii];
+					sortedScores[j + 1][ii]= sortedScores[j][ii];
+					sortedScores[j][ii] = templ[ii];
+				}
+			}
+		}
+	}
+	for (i = 0; i < 10; i++)
+	{
+		scores.append(to_string(i + 1));
+		scores.append(". ");
+		scores.append(sortedScores[i][0]);
+		scores.append("\t:");
+		scores.append(sortedScores[i][1]);
+		scores.append("\tTLS :");
+		scores.append(sortedScores[i][2]);
+		scores.append("\n");
+	}
+	
 	readHighscores.close();
 	scores.append("\nESC for main menu");
 	highScoresText.setString(scores);
@@ -720,7 +761,14 @@ int gameWindow()
 			window.draw(textBackgroundRect);
 			window.draw(gameOverText);
 			window.draw(restartText);
-			window.draw(nameText);
+			if (score > 0)
+			{
+				window.draw(nameText);
+			}
+			else
+			{
+				isScoreSaved = true;
+			}
 		}
 		window.display();
 	}
@@ -758,19 +806,25 @@ int mainMenuWindow()
 				}
 				if (event.key.code == Keyboard::Num2)
 				{
+					//bgPath = "sources/background.png";
+					//window.close();
+					//gameWindow();
+				}
+				if (event.key.code == Keyboard::Num3)
+				{
 					loadTextures(bground, "sources/settings.png");
 					background.setTexture(bground);
 				}
-				if (event.key.code == Keyboard::Num3)
+				if (event.key.code == Keyboard::Num4)
 				{
 					showScores = true;
 					bground = Texture();
 					background.setTexture(bground);
 					showHighScores();
 				}
-				if (event.key.code == Keyboard::Num4)
+				if (event.key.code == Keyboard::Num5)
 				{
-
+					return 1;
 				}
 				if (event.key.code == Keyboard::X)
 				{
