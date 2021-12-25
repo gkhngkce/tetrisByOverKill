@@ -14,6 +14,7 @@ using namespace std;
 int mainMenuWindow();
 
 //Score and related variables
+int level = 1;
 int score = 0;
 int scoreList[100];
 int totalLinesCleared = 0;
@@ -31,8 +32,9 @@ int gameField[fieldRow][fieldColumn] = { 0 };
 //Textures of gamefield
 Texture tiles, bground, outFrame;
 Sprite sprite, background, nextTetrominoSprite;
+vector<Sprite> obstackleSprite;
 string bgPath = "sources/menuScreen.png";
-string tilePath = "sources/tilesDeniz.png";
+string tilePath = "sources/tilesDeniz2.png";
 //Gamoever screen variables
 Text gameOverText, scoreText, totalLinesClearText,highScoresText,restartText,nameText;
 RectangleShape textBackgroundRect;
@@ -145,6 +147,7 @@ struct Point
 {
 	int x, y;
 } currentTetrominosPosition[4], tetrominosFieldPosition[4], nextTetrominosPosition[4];
+vector<Point> obstackleTetrominoPosition;
 
 //Defining tetrominos
 int tetrominos[7][4] =
@@ -299,6 +302,10 @@ int initialize()
 	sprite.setTexture(tiles);
 	background.setTexture(bground);
 	nextTetrominoSprite.setTexture(tiles);
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	obstackleSprite[i].setTexture(tiles);
+	//}
 
 	//Message for game over
 	gameOverText.setPosition({ playWidth / 2, playHeight / 2 });
@@ -443,7 +450,25 @@ int newTetromino()
 	return currentTetromino;
 }
 
-void clearGameField()
+void createObstackle()
+{
+	obstackleSprite.empty();
+	srand(time(0));
+	for (int i = 0; i < (level-1); i++)
+	{
+		Sprite tempSprite;
+		tempSprite.setTexture(tiles);
+		obstackleSprite.push_back(tempSprite);
+		Point temp;
+		temp.x = rand() % 10;
+		temp.y = (rand() % 14) + 10;
+		obstackleTetrominoPosition.push_back(temp);
+		
+		//gameField[obstackleTetrominoPosition[i].y][obstackleTetrominoPosition[i].x] = 1;
+	}
+}
+
+void clearGameField(bool leveledGame)
 {
 	for (int i = 0; i < fieldRow; i++)
 	{
@@ -452,17 +477,20 @@ void clearGameField()
 			gameField[i][j] = 0;
 		}
 	}
-	totalLinesCleared = 0;
-	score = 0;
-	name = "Name =";
-	nameText.setString(name);
-	isScoreSaved = false;
-	isGameOver = false;
-	createTetrominoBatch();
-	newTetromino();
+	if (!leveledGame)
+	{
+		totalLinesCleared = 0;
+		score = 0;
+		name = "Name =";
+		nameText.setString(name);
+		isScoreSaved = false;
+		isGameOver = false;
+		createTetrominoBatch();
+	}
+	//newTetromino();
 }
 
-int gameWindow()
+int gameWindow(bool leveledGame)
 {
 	//initialize game resources if there is a problem do not run game
 	if (initialize() != 0)
@@ -483,9 +511,10 @@ int gameWindow()
 	int dx = 0;
 	bool isRotated = 0;
 	isGameOver = false;
-	int currentTetromino = newTetromino();
+	level = 1;
 	float timer = 0, delay = 0.5;
-	clearGameField();
+	clearGameField(false); //for a clean start we assume that is normal game even it is leveled game
+	int currentTetromino = newTetromino();
 	Music music;
 	if (!music.openFromFile("sources/themeA.ogg"))
 		return -1; // error
@@ -540,6 +569,10 @@ int gameWindow()
 					delay = 0;
 					clock.restart();
 				}
+				if (event.key.code == Keyboard::Subtract)
+				{
+					score += 1000; //cheat for showing the obstackles
+				}
 				if (event.key.code == Keyboard::Enter)
 				{
 					if (isGameOver)
@@ -553,7 +586,7 @@ int gameWindow()
 						}
 						else if (isScoreSaved)
 						{
-							clearGameField();
+							clearGameField(leveledGame);
 						}
 					}
 				}
@@ -565,12 +598,7 @@ int gameWindow()
 						bgPath = "sources/menuScreen.png";
 						window.close();
 						mainMenuWindow();
-						
 					}
-				}
-				if (event.key.code == Keyboard::RShift || event.key.code == Keyboard::LShift)
-				{
-					//Restart...
 				}
 				else
 				{
@@ -680,7 +708,7 @@ int gameWindow()
 				int linesCleared = 0;
 				for (int j = 0; j < fieldColumn; j++)
 				{
-					if (gameField[i][j])
+					if (gameField[i][j] && gameField[i][j] !=8)
 					{
 						count++;
 					}
@@ -698,6 +726,22 @@ int gameWindow()
 				}
 			}
 			Scoring(scoreLinesCleared);
+			if ((score / 2000)+1 > level && leveledGame)
+			{
+				level++;
+				clearGameField(leveledGame);
+				createObstackle();
+				//Draw obstackles
+				for (int i = 0; i < (level-1); i++)
+				{
+					obstackleSprite[i].setPosition((obstackleTetrominoPosition[i].x * 18), (obstackleTetrominoPosition[i].y * 18));
+					obstackleSprite[i].setTextureRect(IntRect((0) * 18, 0, 18, 18));
+					gameField[obstackleTetrominoPosition[i].y][obstackleTetrominoPosition[i].x] = 8;
+					window.draw(obstackleSprite[i]);
+					cout << obstackleTetrominoPosition[i].x << " - " << obstackleTetrominoPosition[i].y << " - " << i << endl;
+				}
+				cout << "level up :" << level << endl;
+			}
 
 			for (int i = 0; i < fieldColumn; i++)
 			{
@@ -802,13 +846,12 @@ int mainMenuWindow()
 				{
 					//bgPath = "sources/background.png";
 					window.close();
-					gameWindow();
+					gameWindow(false);
 				}
 				if (event.key.code == Keyboard::Num2)
 				{
-					//bgPath = "sources/background.png";
-					//window.close();
-					//gameWindow();
+					window.close();
+					gameWindow(true);
 				}
 				if (event.key.code == Keyboard::Num3)
 				{
@@ -829,14 +872,14 @@ int mainMenuWindow()
 				if (event.key.code == Keyboard::X)
 				{
 					bgPath = "sources/themeDeniz.png";
-					tilePath = "sources/tilesDeniz.png";
+					tilePath = "sources/tilesDeniz2.png";
 					loadTextures(bground, "sources/menuScreen.png");
 					background.setTexture(bground);
 				}
 				if (event.key.code == Keyboard::Y)
 				{
 					bgPath = "sources/themeOruchan.png";
-					tilePath = "sources/tilesOruchan.png";
+					tilePath = "sources/tilesOruchan2.png";
 					loadTextures(bground, "sources/menuScreen.png");
 					background.setTexture(bground);
 				}
