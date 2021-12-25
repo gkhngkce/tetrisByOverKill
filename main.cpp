@@ -1,15 +1,17 @@
+#define _WIN32_WINNT 0x0500
+#include <windows.h>
 #include <SFML/Graphics.hpp> //main library for UI
 #include <SFML/Audio.hpp> // for the music
 #include <time.h> //for timing and randomizing
 #include <iostream> //standart library
 #include <list> //list operations
 #include <fstream> //file operations
-#include <conio.h> // for getch() function(waiting an input before exit)
 #include <string>
 #include <regex>
 
 using namespace sf;
 using namespace std;
+HWND consoleScreen=GetConsoleWindow();
 
 int mainMenuWindow();
 
@@ -35,8 +37,9 @@ Sprite sprite, background, nextTetrominoSprite;
 vector<Sprite> obstackleSprite;
 string bgPath = "sources/menuScreen.png";
 string tilePath = "sources/tilesDeniz.png";
+
 //Gamoever screen variables
-Text gameOverText, scoreText, totalLinesClearText,highScoresText,restartText,nameText;
+Text gameOverText, scoreText, totalLinesClearText,highScoresText,restartText,nameText,levelText;
 RectangleShape textBackgroundRect;
 FloatRect gameOverTextRect;
 Font gameOverFont;
@@ -161,9 +164,12 @@ int tetrominos[7][4] =
 	3,5,7,6, // J - 6
 };
 
+
 bool wannaContinue(string section)
 {
 	char decision;
+	ShowWindow(consoleScreen, SW_SHOW);
+	SetFocus(consoleScreen);
 	cout << endl << section << "section has problem with loading files GAME MAY NOT WORK wanna continue anyway(y/n)? :";
 	cin >> decision;
 	if (decision == 'y' || decision == 'Y')
@@ -342,6 +348,13 @@ int initialize()
 	scoreText.setFillColor(Color::Black);
 	scoreText.setString(to_string(score));
 
+	//Level text on the right sight
+	levelText.setPosition(260, 400);
+	levelText.setFont(gameOverFont);
+	levelText.setCharacterSize(15);
+	levelText.setFillColor(Color::Black);
+	levelText.setString(to_string(level));
+
 	//Total lines cleared text on the right sight
 	totalLinesClearText.setPosition(225, 315);
 	totalLinesClearText.setFont(gameOverFont);
@@ -446,7 +459,7 @@ int newTetromino()
 		createTetrominoBatch();
 	}
 	nextTetromino = tetrominoBatch.back();
-	cout << "Current Tetromino :" << currentTetromino - 1 << "\tNext Tetromino :" << nextTetromino << endl;
+	//cout << "Current Tetromino :" << currentTetromino - 1 << "\tNext Tetromino :" << nextTetromino << endl;
 	return currentTetromino;
 }
 
@@ -479,6 +492,8 @@ void clearGameField(bool leveledGame)
 	}
 	if (!leveledGame)
 	{
+		level = 1;
+		levelText.setString(to_string(level));
 		totalLinesCleared = 0;
 		score = 0;
 		name = "Name =";
@@ -487,16 +502,17 @@ void clearGameField(bool leveledGame)
 		isGameOver = false;
 		createTetrominoBatch();
 	}
-	//newTetromino();
 }
 
 int gameWindow(bool leveledGame)
 {
 	//initialize game resources if there is a problem do not run game
-	if (initialize() != 0)
-	{
-		return -1;
-	}
+	//if (initialize() != 0)
+	//{
+	//	return -1;
+	//}
+	consoleScreen = GetConsoleWindow();
+	ShowWindow(consoleScreen, SW_HIDE);
 	loadTextures(bground, bgPath);
 	background.setTexture(bground);
 	loadTextures(tiles, tilePath);
@@ -726,21 +742,25 @@ int gameWindow(bool leveledGame)
 				}
 			}
 			Scoring(scoreLinesCleared);
-			if ((score / 2000)+1 > level && leveledGame)
+			if (leveledGame)
 			{
-				level++;
-				clearGameField(leveledGame);
-				createObstackle();
-				//Draw obstackles
-				for (int i = 0; i < (level-1); i++)
+				if ((score / 2000) + 1 > level)
 				{
-					obstackleSprite[i].setPosition((obstackleTetrominoPosition[i].x * 18), (obstackleTetrominoPosition[i].y * 18));
-					obstackleSprite[i].setTextureRect(IntRect((0) * 18, 0, 18, 18));
-					gameField[obstackleTetrominoPosition[i].y][obstackleTetrominoPosition[i].x] = 8;
-					window.draw(obstackleSprite[i]);
-					cout << obstackleTetrominoPosition[i].x << " - " << obstackleTetrominoPosition[i].y << " - " << i << endl;
+					level++;
+					clearGameField(leveledGame);
+					createObstackle();
+					//Draw obstackles
+					for (int i = 0; i < (level - 1); i++)
+					{
+						obstackleSprite[i].setPosition((obstackleTetrominoPosition[i].x * 18), (obstackleTetrominoPosition[i].y * 18));
+						obstackleSprite[i].setTextureRect(IntRect((0) * 18, 0, 18, 18));
+						gameField[obstackleTetrominoPosition[i].y][obstackleTetrominoPosition[i].x] = 8;
+						window.draw(obstackleSprite[i]);
+						cout << obstackleTetrominoPosition[i].x << " - " << obstackleTetrominoPosition[i].y << " - " << i << endl;
+					}
+					cout << "level up :" << level << endl;
 				}
-				cout << "level up :" << level << endl;
+				levelText.setString(to_string(level));
 			}
 
 			for (int i = 0; i < fieldColumn; i++)
@@ -764,6 +784,8 @@ int gameWindow(bool leveledGame)
 		window.draw(background);
 		window.draw(scoreText);
 		window.draw(totalLinesClearText);
+		window.draw(levelText);
+
 		//Draw next tetromino to right side
 		for (int i = 0; i < 4; i++)
 		{
@@ -821,10 +843,12 @@ int gameWindow(bool leveledGame)
 
 int mainMenuWindow()
 {
+	consoleScreen = GetConsoleWindow();
 	if (initialize() != 0)
 	{
 		return -1;
 	}
+	ShowWindow(consoleScreen, SW_HIDE);
 	bool showScores = false;
 	bgPath = "sources/themeDeniz.png";
 	RenderWindow window(VideoMode(playWidth, playHeight), "Tetris By Overkill!");
