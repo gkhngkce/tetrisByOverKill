@@ -34,7 +34,7 @@ Texture tiles, bground, outFrame;
 Sprite sprite, background, nextTetrominoSprite;
 vector<Sprite> obstackleSprite;
 string bgPath = "sources/menuScreen.png";
-string tilePath = "sources/tilesDeniz2.png";
+string tilePath = "sources/tilesDeniz.png";
 //Gamoever screen variables
 Text gameOverText, scoreText, totalLinesClearText,highScoresText,restartText,nameText;
 RectangleShape textBackgroundRect;
@@ -872,14 +872,14 @@ int mainMenuWindow()
 				if (event.key.code == Keyboard::X)
 				{
 					bgPath = "sources/themeDeniz.png";
-					tilePath = "sources/tilesDeniz2.png";
+					tilePath = "sources/tilesDeniz.png";
 					loadTextures(bground, "sources/menuScreen.png");
 					background.setTexture(bground);
 				}
 				if (event.key.code == Keyboard::Y)
 				{
 					bgPath = "sources/themeOruchan.png";
-					tilePath = "sources/tilesOruchan2.png";
+					tilePath = "sources/tilesOruchan.png";
 					loadTextures(bground, "sources/menuScreen.png");
 					background.setTexture(bground);
 				}
