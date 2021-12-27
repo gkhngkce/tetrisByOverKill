@@ -35,7 +35,7 @@ int gameField[fieldRow][fieldColumn] = { 0 };
 Texture tiles, bground, outFrame;
 Sprite sprite, background, nextTetrominoSprite;
 vector<Sprite> obstackleSprite;
-string bgPath = "sources/menuScreen.png";
+string bgPath = "sources/themeDeniz.png";
 string tilePath = "sources/tilesDeniz.png";
 
 //Gamoever screen variables
@@ -164,7 +164,6 @@ int tetrominos[7][4] =
 	3,5,7,6, // J - 6
 };
 
-
 bool wannaContinue(string section)
 {
 	char decision;
@@ -193,6 +192,12 @@ int loadTextures(Texture& texture, string path)
 		}
 	}
 	return 0;
+}
+
+void changeBackground(string path)
+{
+	loadTextures(bground, path);
+	background.setTexture(bground);
 }
 
 void Scoring(int linesCleared)
@@ -299,6 +304,15 @@ int loadFonts(Font& font, string path)
 	return 0;
 }
 
+void textFormatter(Text* txt,float posx,float posy, Font& font, int size,Color color,String innerText)
+{
+	txt->setPosition(posx,posy);
+	txt->setFont(font);
+	txt->setCharacterSize(size);
+	txt->setFillColor(color);
+	txt->setString(innerText);
+}
+
 int initialize()
 {
 	if (loadFonts(gameOverFont, "sources/sansation.ttf") != 0 || loadTextures(tiles, tilePath) != 0 || loadTextures(bground, bgPath) != 0)
@@ -308,59 +322,27 @@ int initialize()
 	sprite.setTexture(tiles);
 	background.setTexture(bground);
 	nextTetrominoSprite.setTexture(tiles);
-	//for (int i = 0; i < 100; i++)
-	//{
-	//	obstackleSprite[i].setTexture(tiles);
-	//}
-
+	
 	//Message for game over
-	gameOverText.setPosition({ playWidth / 2, playHeight / 2 });
-	gameOverText.setFont(gameOverFont);
-	gameOverText.setCharacterSize(40);
-	gameOverText.setFillColor(Color::Green);
-	gameOverText.setString(" Game Over ");
+	textFormatter(&gameOverText, (playWidth / 2), (playHeight / 2), gameOverFont, 40, Color::Green, " Game Over ");
 
 	//Message for restart game
-	restartText.setPosition({ playWidth / 10, (playHeight / 2)+15 });
-	restartText.setFont(gameOverFont);
-	restartText.setCharacterSize(10);
-	restartText.setFillColor(Color::Green);
-	restartText.setString("Hit ENTER for restart, ESC for main menu");
+	textFormatter(&restartText, (playWidth / 10), ((playHeight / 2) + 15), gameOverFont, 10, Color::Green, "Hit ENTER for restart, ESC for main menu");
 
 	//Message for getting name from user
-	nameText.setPosition({ playWidth / 10, (playHeight / 2) + 30 });
-	nameText.setFont(gameOverFont);
-	nameText.setCharacterSize(10);
-	nameText.setFillColor(Color::Green);
-	nameText.setString(name);
+	textFormatter(&nameText, (playWidth / 10), ((playHeight / 2) + 30), gameOverFont, 10, Color::Green, name);
 
 	//Message for showing high scores
-	highScoresText.setPosition({ playWidth / 10, playHeight / 10 });
-	highScoresText.setFont(gameOverFont);
-	highScoresText.setCharacterSize(15);
-	highScoresText.setFillColor(Color::Black);
-	highScoresText.setString("");
+	textFormatter(&highScoresText, (playWidth / 10), (playHeight / 5), gameOverFont, 15, Color::White, "");
 
 	//Score text on the right sight
-	scoreText.setPosition(225, 287);
-	scoreText.setFont(gameOverFont);
-	scoreText.setCharacterSize(15);
-	scoreText.setFillColor(Color::Black);
-	scoreText.setString(to_string(score));
+	textFormatter(&scoreText, (225), (287), gameOverFont, 15, Color::Black, to_string(score));
 
 	//Level text on the right sight
-	levelText.setPosition(260, 400);
-	levelText.setFont(gameOverFont);
-	levelText.setCharacterSize(15);
-	levelText.setFillColor(Color::Black);
-	levelText.setString(to_string(level));
+	textFormatter(&levelText, (260), (400), gameOverFont, 15, Color::Black, to_string(level));
 
 	//Total lines cleared text on the right sight
-	totalLinesClearText.setPosition(225, 315);
-	totalLinesClearText.setFont(gameOverFont);
-	totalLinesClearText.setCharacterSize(15);
-	totalLinesClearText.setFillColor(Color::Black);
-	totalLinesClearText.setString(to_string(totalLinesCleared));
+	textFormatter(&totalLinesClearText, (225), (315), gameOverFont, 15, Color::Black, to_string(totalLinesCleared));
 
 	//Centeralizing the text
 	gameOverTextRect = gameOverText.getLocalBounds();
@@ -390,7 +372,7 @@ bool collisionDetection()
 		}
 	}
 	return 1;
-};
+}
 
 int rotate(int currTetromino, Point* pointOfCurrent)
 {
@@ -459,7 +441,7 @@ int newTetromino()
 		createTetrominoBatch();
 	}
 	nextTetromino = tetrominoBatch.back();
-	//cout << "Current Tetromino :" << currentTetromino - 1 << "\tNext Tetromino :" << nextTetromino << endl;
+	cout << "Current Tetromino :" << currentTetromino - 1 << "\tNext Tetromino :" << nextTetromino << endl;
 	return currentTetromino;
 }
 
@@ -476,8 +458,9 @@ void createObstackle()
 		temp.x = rand() % 10;
 		temp.y = (rand() % 14) + 10;
 		obstackleTetrominoPosition.push_back(temp);
-		
-		//gameField[obstackleTetrominoPosition[i].y][obstackleTetrominoPosition[i].x] = 1;
+		obstackleSprite[i].setPosition((obstackleTetrominoPosition[i].x * 18), (obstackleTetrominoPosition[i].y * 18));
+		obstackleSprite[i].setTextureRect(IntRect((0) * 18, 0, 18, 18));
+		gameField[obstackleTetrominoPosition[i].y][obstackleTetrominoPosition[i].x] = 8;
 	}
 }
 
@@ -499,22 +482,16 @@ void clearGameField(bool leveledGame)
 		name = "Name =";
 		nameText.setString(name);
 		isScoreSaved = false;
-		isGameOver = false;
 		createTetrominoBatch();
 	}
+	isGameOver = false;
 }
 
 int gameWindow(bool leveledGame)
 {
-	//initialize game resources if there is a problem do not run game
-	//if (initialize() != 0)
-	//{
-	//	return -1;
-	//}
 	consoleScreen = GetConsoleWindow();
 	ShowWindow(consoleScreen, SW_HIDE);
-	loadTextures(bground, bgPath);
-	background.setTexture(bground);
+	changeBackground(bgPath);
 	loadTextures(tiles, tilePath);
 	sprite.setTexture(tiles);
 	srand(time(0));
@@ -581,9 +558,12 @@ int gameWindow(bool leveledGame)
 				}
 				if (event.key.code == Keyboard::Space)
 				{
-					drop = true;
-					delay = 0;
-					clock.restart();
+					if (!isGameOver)
+					{
+						drop = true;
+						delay = 0;
+						clock.restart();
+					}
 				}
 				if (event.key.code == Keyboard::Subtract)
 				{
@@ -610,8 +590,8 @@ int gameWindow(bool leveledGame)
 				{
 					if (isGameOver)
 					{
+						changeBackground("sources/menuScreen.png");
 						music.stop();
-						bgPath = "sources/menuScreen.png";
 						window.close();
 						mainMenuWindow();
 					}
@@ -678,7 +658,20 @@ int gameWindow(bool leveledGame)
 								gameField[tetrominosFieldPosition[i].y][tetrominosFieldPosition[i].x] = currentTetromino;
 							}
 							//Getting the next tetromino from batch
-							currentTetromino = newTetromino();
+							for (int i = 0; i < fieldColumn; i++)
+							{
+								if (gameField[0][i] || gameField[1][i] || gameField[2][i])
+								{
+									cout << "Final Score: " << score << endl << "Total Lines Cleared: " << totalLinesCleared << endl;
+									isGameOver = true;
+									break;
+								}
+							}
+							if (!isGameOver)
+							{
+								currentTetromino = newTetromino();
+							}
+							
 							drop = false;
 							delay = 0.3;
 						}
@@ -698,13 +691,34 @@ int gameWindow(bool leveledGame)
 							gameField[tetrominosFieldPosition[i].y][tetrominosFieldPosition[i].x] = currentTetromino;
 						}
 						//Getting the next tetromino from batch
-						currentTetromino = newTetromino();
+						for (int i = 0; i < fieldColumn; i++)
+						{
+							if (gameField[0][i] || gameField[1][i] || gameField[2][i])
+							{
+								cout << "Final Score: " << score << endl << "Total Lines Cleared: " << totalLinesCleared << endl;
+								isGameOver = true;
+								break;
+							}
+						}
+						for (int i = 0; i < fieldColumn; i++)
+						{
+							if (gameField[0][i] || gameField[1][i] || gameField[2][i])
+							{
+								cout << "Final Score: " << score << endl << "Total Lines Cleared: " << totalLinesCleared << endl;
+								isGameOver = true;
+								break;
+							}
+						}
+						if (!isGameOver)
+						{
+							currentTetromino = newTetromino();
+						}
 					}
 					else
 					{
 						for (int i = 0; i < fieldColumn; i++)
 						{
-							if (gameField[4][i])
+							if (gameField[3][i] && collisionDetection())
 							{
 								isGameOver = true;
 								break;
@@ -752,9 +766,6 @@ int gameWindow(bool leveledGame)
 					//Draw obstackles
 					for (int i = 0; i < (level - 1); i++)
 					{
-						obstackleSprite[i].setPosition((obstackleTetrominoPosition[i].x * 18), (obstackleTetrominoPosition[i].y * 18));
-						obstackleSprite[i].setTextureRect(IntRect((0) * 18, 0, 18, 18));
-						gameField[obstackleTetrominoPosition[i].y][obstackleTetrominoPosition[i].x] = 8;
 						window.draw(obstackleSprite[i]);
 						cout << obstackleTetrominoPosition[i].x << " - " << obstackleTetrominoPosition[i].y << " - " << i << endl;
 					}
@@ -850,7 +861,7 @@ int mainMenuWindow()
 	}
 	ShowWindow(consoleScreen, SW_HIDE);
 	bool showScores = false;
-	bgPath = "sources/themeDeniz.png";
+	changeBackground("sources/menuScreen.png");
 	RenderWindow window(VideoMode(playWidth, playHeight), "Tetris By Overkill!");
 	auto resolution = VideoMode::getDesktopMode();
 	window.setSize({ 480, 720 });
@@ -868,7 +879,6 @@ int mainMenuWindow()
 			{
 				if (event.key.code == Keyboard::Num1)
 				{
-					//bgPath = "sources/background.png";
 					window.close();
 					gameWindow(false);
 				}
@@ -879,14 +889,12 @@ int mainMenuWindow()
 				}
 				if (event.key.code == Keyboard::Num3)
 				{
-					loadTextures(bground, "sources/settings.png");
-					background.setTexture(bground);
+					changeBackground("sources/settings.png");
 				}
 				if (event.key.code == Keyboard::Num4)
 				{
 					showScores = true;
-					bground = Texture();
-					background.setTexture(bground);
+					changeBackground("sources/highScores.png");
 					showHighScores();
 				}
 				if (event.key.code == Keyboard::Num5)
@@ -897,27 +905,25 @@ int mainMenuWindow()
 				{
 					bgPath = "sources/themeDeniz.png";
 					tilePath = "sources/tilesDeniz.png";
-					loadTextures(bground, "sources/menuScreen.png");
-					background.setTexture(bground);
+					changeBackground("sources/menuScreen.png");
 				}
 				if (event.key.code == Keyboard::Y)
 				{
 					bgPath = "sources/themeOruchan.png";
 					tilePath = "sources/tilesOruchan.png";
-					loadTextures(bground, "sources/menuScreen.png");
-					background.setTexture(bground);
+					changeBackground("sources/menuScreen.png");
 				}
 				if (event.key.code == Keyboard::Escape)
 				{
 					if (showScores)
 					{
 						showScores = false;
-						loadTextures(bground, "sources/menuScreen.png");
-						background.setTexture(bground);
+						changeBackground("sources/menuScreen.png");
 					}
 				}
 			}
 		}
+
 		//Drawing to the screen
 		window.clear(Color::White);
 		window.draw(background);
