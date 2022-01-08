@@ -5,6 +5,47 @@
 [![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2015-purple)](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16)
 [![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2019-purple)](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16)
 
+## Group members; Büşra Akbulut, Deniz Akbaba, Gökhan Gökce, Oruçhan Asar
+
+What we did:
+	For our project we decided to make a Tetris clone.
+
+What we did until the midterms:
+	Until the midterms we already had a working clone. Albeit slightly primitive and with
+	some bugs as well.
+
+### Improvements:
+####  Added Menu
+    1)Standard Mode
+    2)Level Mode (new)
+    3)Settings
+    4)High Scores
+    5)Exit
+####  Leveled Game Mode (with spawning non-tiles)
+-    In this mode, you level up every 2000 points.
+-    Unclearable gray piece(non-tile) for differentiation added into tiles and implemented in the game.
+-    Clearing game field after every level up(except gray ones)
+-    In each level, we fix a random point without touching the first 10 lines.
+####  Settings added
+  2 themes added
+-    We can switch between two different themes by using the x and y keys.
+####  Bug fixes & improvements
+#####    Getting rid of cmd screen
+-      Previously, when we first started the game, the cmd screen was opened, but with the latest developments, we start directly with the menu screen and we can choose by    entering a number between 1 and 5 on the keyboard.
+-      Still if there is an error cmd screen shows off
+#####    Game over and restart improvements
+-      Overlapping issue solved
+-      Restart added
+-      Return to main menu added
+#####    Highscores
+-      Sorting highscores (with bubble sort)
+-      Delimiter among high score variables(name,score,total line clear)
+#####    Function improvements
+-      Long functions divided into smaller ones
+-      Repetitive sections turned into function
+
+
+
 <img alt="Visual C++" src="https://www.linkpicture.com/q/69d07793-fc2a-4d3a-8aaf-cb2e45e08eeb.jpg" width="285" height="400" />
 <img alt="Tools" src="https://www.linkpicture.com/q/1a133ca3-22b3-4396-8cdf-a7dddc6b7bf6.jpg" width="285" height="400" />
 
