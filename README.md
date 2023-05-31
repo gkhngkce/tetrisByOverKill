@@ -1,5 +1,4 @@
 # tetrisByOverKill
-<img alt="Logo" src="https://www.linkpicture.com/q/pp_6.jpg" width="100" height="100" />
 
 [![SFML](https://img.shields.io/badge/SFML-v2.5.1-green)](https://www.sfml-dev.org/download/sfml/2.5.1/)
 [![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2015-purple)](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16)
